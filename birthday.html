@@ -1,0 +1,924 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Roche Birthday Card Maker</title>
+
+    <style>
+      /* --- FONTS --- */
+      @font-face {
+        font-family: "Roche Sans";
+        src: url("./fonts/RocheSans-Regular.ttf") format("truetype");
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      @font-face {
+        font-family: "Roche Sans";
+        src: url("./fonts/RocheSans-Bold.ttf") format("truetype");
+        font-weight: 700;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      :root {
+        --bg: #0b1220;
+        --panel: rgba(16, 26, 51, 0.7);
+        --border: rgba(255, 255, 255, 0.12);
+        --text: #eaf0ff;
+        --muted: #9bb0de;
+        --good: #2dd4bf;
+        --roche-blue: #0066CC;
+        --shadow: 0 14px 40px rgba(0, 0, 0, 0.35);
+        --radius: 18px;
+        --font:
+          "Roche Sans", system-ui, -apple-system, Segoe UI, Roboto, Arial,
+          sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: var(--font);
+        background: radial-gradient(
+          1200px 700px at 20% 10%,
+          #1b2b58 0%,
+          var(--bg) 60%,
+          #070b14 100%
+        );
+        color: var(--text);
+      }
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: rgba(11, 18, 32, 0.75);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--border);
+      }
+      .wrap {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 16px 16px;
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        user-select: none;
+      }
+      
+      .logo {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: var(--roche-blue);
+        font-size: 10px;
+        box-shadow: var(--shadow);
+      }
+
+      .brand h1 {
+        margin: 0;
+        font-size: 16px;
+      }
+      .brand p {
+        margin: 2px 0 0;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .pill {
+        border: 1px solid var(--border);
+        background: rgba(16, 26, 51, 0.55);
+        border-radius: 999px;
+        padding: 8px 12px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .pill a {
+        color: var(--text);
+        text-decoration: none;
+        opacity: 0.9;
+      }
+      .pill a:hover {
+        opacity: 1;
+        text-decoration: underline;
+      }
+      main .wrap {
+        padding-top: 18px;
+        padding-bottom: 36px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 420px 1fr;
+        gap: 16px;
+        align-items: start;
+      }
+      @media (max-width: 980px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+      .hd {
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+      }
+      .hd h2 {
+        margin: 0;
+        font-size: 14px;
+      }
+      .hd span {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .bd {
+        padding: 16px;
+      }
+
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+      .field label {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .field input[type="text"],
+      .field input[type="date"],
+      .field input[type="range"] {
+        width: 100%;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: rgba(7, 11, 20, 0.35);
+        color: #ffffff;
+        color-scheme: dark;
+        padding: 10px 12px;
+        outline: none;
+        font-family: var(--font);
+        font-size: 13px;
+      }
+      
+      .field input[type="file"] {
+        width: 100%;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: rgba(7, 11, 20, 0.35);
+        color: var(--muted);
+        font-size: 13px;
+        padding: 0; 
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        height: 40px; 
+      }
+      
+      .field input[type="file"]::file-selector-button {
+        border: none;
+        border-right: 1px solid var(--border);
+        background: rgba(16, 26, 51, 0.9);
+        color: var(--text);
+        padding: 0 16px;
+        height: 100%;
+        cursor: pointer;
+        font-weight: 700;
+        font-family: var(--font);
+        margin-right: 12px;
+        transition: background 0.2s ease;
+      }
+      
+      .field input[type="file"]::file-selector-button:hover {
+        background: var(--roche-blue);
+        color: white;
+      }
+
+      .help {
+        font-size: 12px;
+        color: var(--muted);
+        line-height: 1.35;
+      }
+      .btnRow {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 6px;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: rgba(16, 26, 51, 0.75);
+        color: var(--text);
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 13px;
+        user-select: none;
+        transition:
+          transform 0.06s ease,
+          border-color 0.12s ease;
+      }
+      .btn:hover {
+        border-color: rgba(90, 167, 255, 0.55);
+      }
+      .btn:active {
+        transform: translateY(1px);
+      }
+      .btn.good {
+        background: rgba(45, 212, 191, 0.12);
+        border-color: rgba(45, 212, 191, 0.35);
+      }
+
+      .canvasStage {
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        background: rgba(7, 11, 20, 0.35);
+        padding: 14px;
+      }
+      canvas {
+        width: 100%;
+        height: auto;
+        display: block;
+        background: #ffffff;
+        border-radius: 14px;
+        cursor: grab;
+      }
+      canvas:active {
+        cursor: grabbing;
+      }
+
+      .miniRow {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        font-size: 12px;
+        color: var(--muted);
+        margin-bottom: 10px;
+      }
+      .toast {
+        position: fixed;
+        left: 50%;
+        bottom: 18px;
+        transform: translateX(-50%);
+        background: rgba(16, 26, 51, 0.92);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        padding: 10px 12px;
+        border-radius: 999px;
+        color: var(--text);
+        font-size: 12px;
+        display: none;
+        z-index: 99;
+        max-width: 92vw;
+        text-align: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <div class="wrap">
+        <div class="row">
+          <div class="brand">
+            <div class="logo">Roche</div>
+            <div>
+              <h1>Birthday Card Maker</h1>
+          
+            </div>
+          </div>
+
+          <div class="pill">
+            <a style="color: white" href="./index.html">← Home</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="wrap">
+        <div class="grid">
+          <div class="card">
+            <div class="hd">
+              <h2>Inputs</h2>
+              <span>Drag photo on preview</span>
+            </div>
+            <div class="bd">
+              <div class="field">
+                <label>Name</label>
+                <input id="inpName" type="text" placeholder="Employee Name" />
+              </div>
+
+              <div class="field">
+                <label>Date of Birth</label>
+                <input id="inpDob" type="date" />
+                <div class="help">
+                  Display format: <b>MM . DD . YYYY</b> (with spaces)
+                </div>
+              </div>
+
+              <div class="field">
+                <label>Photo</label>
+                <input id="inpPhoto" type="file" accept="image/*" />
+                <div class="help">
+                  Upload a photo, then <b>drag</b> it inside the circle.
+                </div>
+              </div>
+
+              <div class="field">
+                <label
+                  >Photo Zoom
+                  <span
+                    id="zoomTxt"
+                    style="color: var(--text); font-weight: 700"
+                    >1.15×</span
+                  ></label
+                >
+                <input
+                  id="inpZoom"
+                  type="range"
+                  min="0.6"
+                  max="2.6"
+                  step="0.01"
+                  value="1.15"
+                />
+              </div>
+
+              <div class="btnRow">
+                <button class="btn good" id="btnPdf">Download PDF</button>
+                <button class="btn good" id="btnJpg">Download JPG</button>
+                <button class="btn good" id="btnPrint">Print</button>
+                <button class="btn" id="btnReset">Reset</button>
+              </div>
+
+              <div style="height: 10px"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="hd">
+              <h2>Preview (1080×1080)</h2>
+              <span id="assetStatus">Loading For apps-01.png…</span>
+            </div>
+            <div class="bd">
+              <div class="miniRow">
+                <div>Tip: Use Chrome/Edge for best PDF output</div>
+                <div>Print: scale <b>100%</b></div>
+              </div>
+              <div class="canvasStage">
+                <canvas id="cv" width="1080" height="1080"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+    <script>
+      const NAME_FONT_SIZE = ptToPx(25); 
+      const DOB_FONT_SIZE = ptToPx(10); 
+
+      (() => {
+        const CANVAS_W = 1080;
+        const CANVAS_H = 1080;
+
+        const PHOTO_CX = 540; 
+        const PHOTO_CY = 573; 
+        const PHOTO_R = 199; 
+
+        const NAME_Y = 845; 
+        const DOB_Y = 905; 
+
+        const NAME_FONT_SIZE = 50; 
+        const DOB_FONT_SIZE = 24; 
+        const NAME_COLOR = "#FFFFFF";
+        const DOB_COLOR = "#FFFFFF"; 
+
+        const ASSET_FINAL = "./images/BirthdayBackground.png";
+
+        const state = {
+          name: "",
+          dobISO: "",
+          photoImg: null,
+          zoom: 1.15,
+          offsetX: 0,
+          offsetY: 0,
+          dragging: false,
+          dragStart: { x: 0, y: 0, ox: 0, oy: 0 },
+          ready: false,
+        };
+
+        const cv = document.getElementById("cv");
+        const ctx = cv.getContext("2d");
+        const inpName = document.getElementById("inpName");
+        const inpDob = document.getElementById("inpDob");
+        const inpPhoto = document.getElementById("inpPhoto");
+        const inpZoom = document.getElementById("inpZoom");
+        const zoomTxt = document.getElementById("zoomTxt");
+        const btnPdf = document.getElementById("btnPdf");
+        const btnJpg = document.getElementById("btnJpg");
+        const btnPrint = document.getElementById("btnPrint");
+        const btnReset = document.getElementById("btnReset");
+        const assetStatus = document.getElementById("assetStatus");
+        const toast = document.getElementById("toast");
+
+        function buildHiResDataUrl(scale, mimeType = "image/png") {
+          const hi = document.createElement("canvas");
+          hi.width = CANVAS_W * scale;
+          hi.height = CANVAS_H * scale;
+
+          const hctx = hi.getContext("2d");
+          hctx.imageSmoothingEnabled = true;
+          hctx.imageSmoothingQuality = "high";
+
+          hctx.save();
+          hctx.scale(scale, scale);
+
+          (function drawFinalBackgroundSquareCoverTo(ctx2, img) {
+            const iw = img.width,
+              ih = img.height;
+            const s = Math.min(iw, ih);
+            const sx = Math.floor((iw - s) / 2);
+            const sy = Math.floor((ih - s) / 2);
+            ctx2.drawImage(img, sx, sy, s, s, 0, 0, CANVAS_W, CANVAS_H);
+          })(hctx, finalImg);
+
+          (function drawPhotoInCircleTo(ctx2) {
+            ctx2.save();
+            ctx2.beginPath();
+            ctx2.arc(PHOTO_CX, PHOTO_CY, PHOTO_R, 0, Math.PI * 2);
+            ctx2.clip();
+
+            if (state.photoImg) {
+              const img = state.photoImg;
+              const frameW = PHOTO_R * 2;
+              const frameH = PHOTO_R * 2;
+              const imgAR = img.width / img.height;
+
+              let drawW, drawH;
+              if (imgAR > 1) {
+                drawH = frameH * state.zoom;
+                drawW = drawH * imgAR;
+              } else {
+                drawW = frameW * state.zoom;
+                drawH = drawW / imgAR;
+              }
+
+              const cx = PHOTO_CX + state.offsetX;
+              const cy = PHOTO_CY + state.offsetY;
+              const dx = cx - drawW / 2;
+              const dy = cy - drawH / 2;
+
+              ctx2.drawImage(img, dx, dy, drawW, drawH);
+            }
+            ctx2.restore();
+          })(hctx);
+
+          (function drawTextTo(ctx2) {
+            ctx2.save();
+            ctx2.textAlign = "center";
+            ctx2.textBaseline = "top";
+
+            ctx2.fillStyle = NAME_COLOR;
+            ctx2.font = `700 ${NAME_FONT_SIZE}px "Roche Sans", system-ui, Arial, sans-serif`;
+            ctx2.fillText(state.name || "", CANVAS_W / 2, NAME_Y);
+
+            ctx2.fillStyle = DOB_COLOR;
+            ctx2.font = `400 ${DOB_FONT_SIZE}px "Roche Sans", system-ui, Arial, sans-serif`;
+            ctx2.fillText(
+              state.dobISO ? formatDob(state.dobISO) : "",
+              CANVAS_W / 2,
+              DOB_Y,
+            );
+
+            ctx2.restore();
+          })(hctx);
+
+          hctx.restore();
+
+          return hi.toDataURL(mimeType, 0.95);
+        }
+
+        function showToast(msg) {
+          toast.textContent = msg;
+          toast.style.display = "block";
+          clearTimeout(showToast._t);
+          showToast._t = setTimeout(() => (toast.style.display = "none"), 2200);
+        }
+
+        function pad2(n) {
+          return String(n).padStart(2, "0");
+        }
+
+        function formatDob(iso) {
+          if (!iso) return "";
+          const d = new Date(iso + "T00:00:00");
+          const mm = pad2(d.getMonth() + 1);
+          const dd = pad2(d.getDate());
+          const yy = String(d.getFullYear());
+          const raw = `${mm}.${dd}.${yy}`;
+          return raw.split("").join(" ");
+        }
+
+        function loadImage(src) {
+          return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            img.onerror = () => reject(new Error("Failed to load: " + src));
+            img.src = src;
+          });
+        }
+
+        function drawFinalBackgroundSquareCover(img) {
+          const iw = img.width,
+            ih = img.height;
+          const s = Math.min(iw, ih);
+          const sx = Math.floor((iw - s) / 2);
+          const sy = Math.floor((ih - s) / 2);
+          ctx.drawImage(img, sx, sy, s, s, 0, 0, CANVAS_W, CANVAS_H);
+        }
+
+        function drawPhotoInCircle() {
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(PHOTO_CX, PHOTO_CY, PHOTO_R, 0, Math.PI * 2);
+          ctx.clip();
+
+          if (!state.photoImg) {
+            ctx.restore();
+            return;
+          }
+
+          const img = state.photoImg;
+          const frameW = PHOTO_R * 2;
+          const frameH = PHOTO_R * 2;
+          const frameAR = frameW / frameH;
+          const imgAR = img.width / img.height;
+
+          let drawW, drawH;
+          if (imgAR > frameAR) {
+            drawH = frameH * state.zoom;
+            drawW = drawH * imgAR;
+          } else {
+            drawW = frameW * state.zoom;
+            drawH = drawW / imgAR;
+          }
+
+          const cx = PHOTO_CX + state.offsetX;
+          const cy = PHOTO_CY + state.offsetY;
+          const dx = cx - drawW / 2;
+          const dy = cy - drawH / 2;
+
+          ctx.drawImage(img, dx, dy, drawW, drawH);
+          ctx.restore();
+        }
+
+        function drawText() {
+          ctx.save();
+          ctx.textAlign = "center";
+          ctx.textBaseline = "top";
+
+          ctx.fillStyle = NAME_COLOR;
+          ctx.font = `700 ${NAME_FONT_SIZE}px "Roche Sans", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif`;
+          ctx.fillText(state.name || "", CANVAS_W / 2, NAME_Y);
+
+          ctx.fillStyle = DOB_COLOR;
+          ctx.font = `400 ${DOB_FONT_SIZE}px "Roche Sans", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif`;
+          ctx.fillText(
+            state.dobISO ? formatDob(state.dobISO) : "",
+            CANVAS_W / 2,
+            DOB_Y,
+          );
+
+          ctx.restore();
+        }
+
+        let finalImg = null;
+
+        function render() {
+          ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
+
+          if (!state.ready) {
+            ctx.fillStyle = "#1b7fc9";
+            ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+            ctx.fillStyle = "rgba(255,255,255,0.95)";
+            ctx.font = "700 18px system-ui, sans-serif";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText(
+              "Loading For apps-01.png…",
+              CANVAS_W / 2,
+              CANVAS_H / 2,
+            );
+            return;
+          }
+
+          drawFinalBackgroundSquareCover(finalImg);
+          drawPhotoInCircle();
+          drawText();
+        }
+
+        function canvasPoint(evt) {
+          const rect = cv.getBoundingClientRect();
+          const x = (evt.clientX - rect.left) * (cv.width / rect.width);
+          const y = (evt.clientY - rect.top) * (cv.height / rect.height);
+          return { x, y };
+        }
+        
+        function inCircle(pt) {
+          const dx = pt.x - PHOTO_CX;
+          const dy = pt.y - PHOTO_CY;
+          return dx * dx + dy * dy <= PHOTO_R * PHOTO_R;
+        }
+
+        cv.addEventListener("pointerdown", (e) => {
+          if (!state.ready || !state.photoImg) return; 
+          const pt = canvasPoint(e);
+          if (!inCircle(pt)) return;
+          state.dragging = true;
+          cv.setPointerCapture(e.pointerId);
+          state.dragStart = {
+            x: pt.x,
+            y: pt.y,
+            ox: state.offsetX,
+            oy: state.offsetY,
+          };
+        });
+        
+        cv.addEventListener("pointermove", (e) => {
+          if (!state.dragging) return;
+          const pt = canvasPoint(e);
+          state.offsetX = state.dragStart.ox + (pt.x - state.dragStart.x);
+          state.offsetY = state.dragStart.oy + (pt.y - state.dragStart.y);
+          render();
+        });
+        
+        cv.addEventListener("pointerup", (e) => {
+          if (!state.dragging) return;
+          state.dragging = false;
+          try {
+            cv.releasePointerCapture(e.pointerId);
+          } catch (_) {}
+        });
+
+        inpName.addEventListener("input", (e) => {
+          state.name = e.target.value;
+          render();
+        });
+        inpDob.addEventListener("input", (e) => {
+          state.dobISO = e.target.value;
+          render();
+        });
+
+        inpZoom.addEventListener("input", (e) => {
+          state.zoom = Number(e.target.value);
+          zoomTxt.textContent = state.zoom.toFixed(2) + "×";
+          render();
+        });
+
+        inpPhoto.addEventListener("change", async (e) => {
+          const file = e.target.files && e.target.files[0];
+          if (!file) return;
+
+          const dataUrl = await new Promise((resolve, reject) => {
+            const fr = new FileReader();
+            fr.onload = () => resolve(fr.result);
+            fr.onerror = reject;
+            fr.readAsDataURL(file);
+          });
+
+          const img = await new Promise((resolve, reject) => {
+            const im = new Image();
+            im.onload = () => resolve(im);
+            im.onerror = reject;
+            im.src = dataUrl;
+          });
+
+          state.photoImg = img;
+          state.offsetX = 0;
+          state.offsetY = 0;
+          showToast("Photo loaded. Drag to position.");
+          render();
+        });
+
+        btnReset.addEventListener("click", () => {
+          state.name = "";
+          state.dobISO = "";
+          state.photoImg = null;
+          state.zoom = 1.15;
+          state.offsetX = 0;
+          state.offsetY = 0;
+
+          inpName.value = "";
+          inpDob.value = "";
+          inpPhoto.value = "";
+          inpZoom.value = "1.15";
+          zoomTxt.textContent = "1.15×";
+
+          render();
+          showToast("Reset done.");
+        });
+
+        async function exportPDF() {
+          const SCALE = 1; 
+
+          if (!state.ready) {
+            showToast("Template not loaded yet.");
+            return;
+          }
+          await ensureFontsLoaded();
+
+          const hiPng = buildHiResDataUrl(SCALE, "image/png");
+
+          const { jsPDF } = window.jspdf;
+          const pdf = new jsPDF({
+            orientation: "portrait",
+            unit: "in",
+            format: [6, 6],
+          });
+
+          pdf.addImage(hiPng, "PNG", 0, 0, 6, 6, undefined, "FAST");
+
+          const safeName = (state.name || "BirthdayCard")
+            .trim()
+            .replace(/[^\w\- ]+/g, "")
+            .replace(/\s+/g, " ")
+            .slice(0, 40);
+
+          pdf.save(`Roche_Birthday_${safeName || "Card"}.pdf`);
+          showToast(`PDF downloaded (6x6 inch).`);
+        }
+
+        async function downloadJPG() {
+          if (!state.ready) {
+            showToast("Template not loaded yet.");
+            return;
+          }
+          await ensureFontsLoaded();
+
+          const SCALE = 1; 
+          const dataUrl = buildHiResDataUrl(SCALE, "image/jpeg");
+
+          const a = document.createElement("a");
+          const safeName = (state.name || "BirthdayCard")
+            .trim()
+            .replace(/[^\w\- ]+/g, "")
+            .replace(/\s+/g, " ")
+            .slice(0, 40);
+            
+          a.href = dataUrl;
+          a.download = `Roche_Birthday_${safeName || "Card"}.jpg`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          showToast("JPG Downloaded");
+        }
+
+        // ==========================================
+        // 100% BULLETPROOF PRINT FUNCTION
+        // Splits the HTML tags to hide them from VS Code Live Server
+        // ==========================================
+        async function print6x6Inches() {
+          if (!state.ready) {
+            showToast("Template not loaded yet.");
+            return;
+          }
+
+          await ensureFontsLoaded();
+          const PRINT_SCALE = 1; 
+          const pngDataUrl = buildHiResDataUrl(PRINT_SCALE, "image/png");
+
+          const w = window.open("", "_blank");
+          if (!w) {
+            showToast("Pop-up blocked. Allow pop-ups to print.");
+            return;
+          }
+
+          // Breaking the strings apart prevents Live Server from finding them and injecting code
+          const htmlLines = [
+            "<!DOCTYPE html>",
+            "<ht" + "ml>",
+            "<he" + "ad>",
+            "<title>Print</title>",
+            "<style>",
+            "@page { size: 6in 6in; margin: 0; }",
+            "html, body { margin: 0; padding: 0; width: 6in; height: 6in; background: #fff; overflow: hidden; }",
+            "img { width: 6in; height: 6in; display: block; }",
+            "</style>",
+            "</he" + "ad>",
+            "<bo" + "dy>",
+            "<img id='card-img' />",
+            "</bo" + "dy>",
+            "</ht" + "ml>"
+          ];
+
+          w.document.write(htmlLines.join(""));
+          w.document.close();
+
+          const imgEl = w.document.getElementById("card-img");
+          imgEl.onload = () => {
+            w.focus();
+            w.print();
+            setTimeout(() => { w.close(); }, 300);
+          };
+          imgEl.src = pngDataUrl;
+        }
+
+        btnPdf.addEventListener("click", () => {
+          try {
+            exportPDF();
+          } catch (err) {
+            console.error(err);
+            showToast("PDF export failed. Use Chrome/Edge.");
+          }
+        });
+
+        btnJpg.addEventListener("click", () => {
+          try {
+            downloadJPG();
+          } catch (err) {
+            console.error(err);
+            showToast("JPG export failed.");
+          }
+        });
+
+        btnPrint.addEventListener("click", () => {
+          try {
+            print6x6Inches();
+          } catch (err) {
+            console.error(err);
+            showToast("Printing issue found");
+          }
+        });
+
+        // Boot
+        (async () => {
+          try {
+            assetStatus.textContent = "Loading background…";
+            finalImg = await loadImage(ASSET_FINAL);
+            await ensureFontsLoaded();
+            state.ready = true;
+            assetStatus.textContent = "Assets loaded ✔";
+            render();
+          } catch (e) {
+            console.error(e);
+            assetStatus.textContent = "Background not found ✖";
+            showToast("Put For apps-01.png in the same folder as index.html");
+            state.ready = false;
+            render();
+          }
+        })();
+      })();
+
+      function ptToPx(pt) {
+        return pt * (96 / 72);
+      }
+      async function ensureFontsLoaded() {
+        try {
+          await Promise.all([
+            document.fonts.load(`700 ${ptToPx(25)}px "Roche Sans"`),
+            document.fonts.load(`400 ${ptToPx(10)}px "Roche Sans"`),
+          ]);
+          await document.fonts.ready;
+        } catch (e) {
+          console.warn("Font load warning:", e);
+        }
+      }
+    </script>
+  </body>
+</html>

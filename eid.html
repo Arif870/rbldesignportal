@@ -1,0 +1,684 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Roche Eid Ul Fitr 2026 Maker</title>
+
+    <style>
+      /* --- FONTS --- */
+      @font-face {
+        font-family: "Roche Sans Light";
+        src: url("./fonts/RocheSans-Light.ttf") format("truetype");
+        font-weight: 300; /* Light */
+        font-style: normal;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Roche Sans Regular";
+        src: url("./fonts/RocheSans-Regular.ttf") format("truetype");
+        font-weight: 400; /* Regular */
+        font-style: normal;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Roche Sans Medium";
+        src: url("./fonts/RocheSans-Medium.ttf") format("truetype");
+        font-weight: 500; /* Medium */
+        font-style: normal;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Roche Sans Bold";
+        src: url("./fonts/RocheSans-Bold.ttf") format("truetype");
+        font-weight: 700; /* Bold */
+        font-style: normal;
+        font-display: swap;
+      }
+
+      :root {
+        --bg: #0b1220;
+        --panel: rgba(16, 26, 51, 0.7);
+        --border: rgba(255, 255, 255, 0.12);
+        --text: #eaf0ff;
+        --muted: #9bb0de;
+        --roche-blue: #0066cc;
+        --good: #2dd4bf;
+        --shadow: 0 14px 40px rgba(0, 0, 0, 0.35);
+        --radius: 18px;
+        --font:
+          "Roche Sans Regular", system-ui, -apple-system, Segoe UI, Roboto, Arial,
+          sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: var(--font);
+        background: radial-gradient(
+          1200px 700px at 20% 10%,
+          #1b2b58 0%,
+          var(--bg) 60%,
+          #070b14 100%
+        );
+        color: var(--text);
+      }
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: rgba(11, 18, 32, 0.75);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--border);
+      }
+      .wrap {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 16px 16px;
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        user-select: none;
+      }
+      .logo {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: var(--roche-blue);
+        font-size: 10px;
+        box-shadow: var(--shadow);
+      }
+      .brand h1 {
+        margin: 0;
+        font-size: 16px;
+      }
+      .brand p {
+        margin: 2px 0 0;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .pill {
+        border: 1px solid var(--border);
+        background: rgba(16, 26, 51, 0.55);
+        border-radius: 999px;
+        padding: 8px 12px;
+        font-size: 12px;
+        color: var(--muted);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .pill a {
+        color: var(--text);
+        text-decoration: none;
+        opacity: 0.9;
+      }
+      .pill a:hover {
+        opacity: 1;
+        text-decoration: underline;
+      }
+
+      main .wrap {
+        padding-top: 18px;
+        padding-bottom: 36px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 420px 1fr;
+        gap: 16px;
+        align-items: start;
+      }
+      @media (max-width: 980px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+      .hd {
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+      }
+      .hd h2 {
+        margin: 0;
+        font-size: 14px;
+      }
+      .hd span {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .bd {
+        padding: 16px;
+      }
+
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+      .field label {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .field input[type="text"] {
+        width: 100%;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: rgba(7, 11, 20, 0.35);
+        color: #ffffff;
+        padding: 10px 12px;
+        outline: none;
+        font-family: var(--font);
+        font-size: 13px;
+      }
+
+      .help {
+        font-size: 12px;
+        color: var(--muted);
+        line-height: 1.35;
+      }
+
+      .btnRow {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 6px;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: rgba(16, 26, 51, 0.75);
+        color: var(--text);
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 13px;
+        user-select: none;
+        transition:
+          transform 0.06s ease,
+          border-color 0.12s ease;
+      }
+      .btn:hover {
+        border-color: rgba(90, 167, 255, 0.55);
+      }
+      .btn:active {
+        transform: translateY(1px);
+      }
+      .btn.good {
+        background: rgba(45, 212, 191, 0.12);
+        border-color: rgba(45, 212, 191, 0.35);
+      }
+
+      .canvasStage {
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        background: rgba(7, 11, 20, 0.35);
+        padding: 14px;
+      }
+      canvas {
+        width: 100%;
+        height: auto;
+        display: block;
+        background: #ffffff;
+        border-radius: 14px;
+      }
+
+      .miniRow {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        font-size: 12px;
+        color: var(--muted);
+        margin-bottom: 10px;
+      }
+
+      .toast {
+        position: fixed;
+        left: 50%;
+        bottom: 18px;
+        transform: translateX(-50%);
+        background: rgba(16, 26, 51, 0.92);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        padding: 10px 12px;
+        border-radius: 999px;
+        color: var(--text);
+        font-size: 12px;
+        display: none;
+        z-index: 99;
+        max-width: 92vw;
+        text-align: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <div class="wrap">
+        <div class="row">
+          <div class="brand">
+            <div class="logo">Roche</div>
+            <div>
+              <h1>Eid Ul Fitr 2026</h1>
+            </div>
+          </div>
+          <div class="pill">
+            <a href="./index.html">← Home</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="wrap">
+        <div class="grid">
+          <div class="card">
+            <div class="hd">
+              <h2>Inputs</h2>
+            </div>
+            <div class="bd">
+              <div class="field">
+                <label>Name</label>
+                <input id="inpName" type="text" placeholder="Name" />
+              </div>
+
+              <div class="field">
+                <label>Designation</label>
+                <input id="inpDesig" type="text" placeholder="Designation" />
+                <div class="help">"Roche Bangladesh Limited" will be added automatically below.</div>
+              </div>
+
+              <div class="btnRow">
+                <button class="btn good" id="btnPdf">Download PDF</button>
+                <button class="btn good" id="btnJpg">Download JPG</button>
+                <button class="btn good" id="btnPrint">Print</button>
+                <button class="btn" id="btnReset">Reset</button>
+              </div>
+
+              <div style="height: 10px"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="hd">
+              <h2>Preview</h2>
+              <span id="assetStatus">Loading EidUlFitr2026.jpg…</span>
+            </div>
+            <div class="bd">
+              <div class="miniRow">
+                <div>Tip: Use Chrome/Edge for best PDF output</div>
+                <div>Print: scale <b>100%</b></div>
+              </div>
+              <div class="canvasStage">
+                <canvas id="cv" width="1080" height="1080"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+    <script>
+      (() => {
+        const CANVAS_W = 1080;
+        const CANVAS_H = 1080;
+
+        // ======== Layout controls ========
+        const TEXT_ALIGN_X = 1020; // X position for right-aligned text (80px from the right edge)
+        
+        const NAME_Y = 910;        // Y position for Name
+        const DESIG_Y = 950;       // Y position for Designation
+        const COMPANY_Y = 990;     // Y position for Fixed Company Name
+
+        // ======== Fonts & Colors ========
+        function ptToPx(pt) {
+          return pt * (96 / 72);
+        }
+
+        const FONT_SIZE = ptToPx(22); // 27pt for both name and designation
+        const TEXT_COLOR = "#254075"; // Specific Blue requested
+
+        // Background Image
+        const ASSET_FINAL = "./images/EidUlFitr2026.jpg";
+
+        // ======== State ========
+        const state = {
+          name: "",
+          desig: "",
+          ready: false,
+        };
+
+        // ======== DOM ========
+        const cv = document.getElementById("cv");
+        const ctx = cv.getContext("2d");
+        const inpName = document.getElementById("inpName");
+        const inpDesig = document.getElementById("inpDesig");
+        const btnPdf = document.getElementById("btnPdf");
+        const btnJpg = document.getElementById("btnJpg");
+        const btnPrint = document.getElementById("btnPrint");
+        const btnReset = document.getElementById("btnReset");
+        const assetStatus = document.getElementById("assetStatus");
+        const toast = document.getElementById("toast");
+
+        function showToast(msg) {
+          toast.textContent = msg;
+          toast.style.display = "block";
+          clearTimeout(showToast._t);
+          showToast._t = setTimeout(() => (toast.style.display = "none"), 2200);
+        }
+
+        function loadImage(src) {
+          return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            img.onerror = () => reject(new Error("Failed to load: " + src));
+            img.src = src;
+          });
+        }
+
+        async function ensureFontsLoaded() {
+          try {
+            await Promise.all([
+              document.fonts.load(`300 ${FONT_SIZE}px "Roche Sans Light"`),
+              document.fonts.load(`500 ${FONT_SIZE}px "Roche Sans Medium"`),
+            ]);
+            await document.fonts.ready;
+          } catch (e) {
+            console.warn("Font load warning:", e);
+          }
+        }
+
+        // Draw background: center-crop to square then fill canvas
+        function drawBackgroundSquareCover(img) {
+          const iw = img.width;
+          const ih = img.height;
+          const s = Math.min(iw, ih);
+          const sx = Math.floor((iw - s) / 2);
+          const sy = Math.floor((ih - s) / 2);
+          ctx.drawImage(img, sx, sy, s, s, 0, 0, CANVAS_W, CANVAS_H);
+        }
+
+        function drawText() {
+          ctx.save();
+          ctx.textAlign = "right"; 
+          ctx.textBaseline = "top";
+          ctx.fillStyle = TEXT_COLOR;
+
+          // 1. Name (Medium - 500)
+          ctx.font = `500 ${FONT_SIZE}px "Roche Sans Medium", system-ui, Arial, sans-serif`;
+          ctx.fillText(state.name || "", TEXT_ALIGN_X, NAME_Y);
+
+          // 2. Designation (Light - 300)
+          ctx.font = `300 ${FONT_SIZE}px "Roche Sans Light", system-ui, Arial, sans-serif`;
+          ctx.fillText(state.desig || "", TEXT_ALIGN_X, DESIG_Y);
+          
+          // 3. Fixed Company Name (Light - 300)
+          ctx.fillText("Roche Bangladesh Limited", TEXT_ALIGN_X, COMPANY_Y);
+
+          ctx.restore();
+        }
+
+        let bgImg = null;
+
+        function render() {
+          ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
+
+          if (!state.ready) {
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+            ctx.fillStyle = "#111827";
+            ctx.font = "700 18px system-ui, sans-serif";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText(
+              "Loading EidUlFitr2026.jpg...",
+              CANVAS_W / 2,
+              CANVAS_H / 2,
+            );
+            return;
+          }
+
+          if (!bgImg) return;
+
+          // 1) background
+          drawBackgroundSquareCover(bgImg);
+
+          // 2) text
+          drawText();
+        }
+
+        // Inputs
+        inpName.addEventListener("input", (e) => {
+          state.name = e.target.value;
+          render();
+        });
+
+        inpDesig.addEventListener("input", (e) => {
+          state.desig = e.target.value;
+          render();
+        });
+
+        btnReset.addEventListener("click", () => {
+          state.name = "";
+          state.desig = "";
+          
+          inpName.value = "";
+          inpDesig.value = "";
+          
+          render();
+          showToast("Reset done.");
+        });
+
+        function buildHiResDataUrl(scale, mimeType = "image/png") {
+          const hi = document.createElement("canvas");
+          hi.width = CANVAS_W * scale;
+          hi.height = CANVAS_H * scale;
+
+          const hctx = hi.getContext("2d");
+          hctx.imageSmoothingEnabled = true;
+          hctx.imageSmoothingQuality = "high";
+
+          hctx.save();
+          hctx.scale(scale, scale);
+
+          // background
+          (function drawBg(ctx2, img) {
+            const iw = img.width;
+            const ih = img.height;
+            const s = Math.min(iw, ih);
+            const sx = Math.floor((iw - s) / 2);
+            const sy = Math.floor((ih - s) / 2);
+            ctx2.drawImage(img, sx, sy, s, s, 0, 0, CANVAS_W, CANVAS_H);
+          })(hctx, bgImg);
+
+          // text
+          (function drawTxt(ctx2) {
+            ctx2.save();
+            ctx2.textAlign = "right";
+            ctx2.textBaseline = "top";
+            ctx2.fillStyle = TEXT_COLOR;
+
+            ctx2.font = `500 ${FONT_SIZE}px "Roche Sans Medium", system-ui, Arial, sans-serif`;
+            ctx2.fillText(state.name || "", TEXT_ALIGN_X, NAME_Y);
+
+            ctx2.font = `300 ${FONT_SIZE}px "Roche Sans Light", system-ui, Arial, sans-serif`;
+            ctx2.fillText(state.desig || "", TEXT_ALIGN_X, DESIG_Y);
+            ctx2.fillText("Roche Bangladesh Limited", TEXT_ALIGN_X, COMPANY_Y);
+
+            ctx2.restore();
+          })(hctx);
+
+          hctx.restore();
+          return hi.toDataURL(mimeType, 0.95);
+        }
+
+        // PDF export (6x6 inches)
+        async function exportPDF() {
+          if (!state.ready || !bgImg) {
+            showToast("Template not loaded yet.");
+            return;
+          }
+
+          await ensureFontsLoaded();
+
+          const SCALE = 1; 
+          const hiPng = buildHiResDataUrl(SCALE, "image/png");
+
+          const { jsPDF } = window.jspdf;
+          const pdf = new jsPDF({
+            orientation: "portrait",
+            unit: "in",
+            format: [6, 6],
+          });
+
+          pdf.addImage(hiPng, "PNG", 0, 0, 6, 6, undefined, "FAST");
+
+          const safeName = (state.name || "EidUlFitr2026")
+            .trim()
+            .replace(/[^\w\- ]+/g, "")
+            .replace(/\s+/g, " ")
+            .slice(0, 40);
+
+          pdf.save(`Roche_Eid_${safeName}.pdf`);
+          showToast(`PDF downloaded (6x6 inch).`);
+        }
+
+        // JPG Export
+        async function downloadJPG() {
+          if (!state.ready || !bgImg) {
+            showToast("Template not loaded yet.");
+            return;
+          }
+          await ensureFontsLoaded();
+
+          const SCALE = 1; 
+          const dataUrl = buildHiResDataUrl(SCALE, "image/jpeg");
+
+          const a = document.createElement("a");
+          const safeName = (state.name || "EidUlFitr2026")
+            .trim()
+            .replace(/[^\w\- ]+/g, "")
+            .replace(/\s+/g, " ")
+            .slice(0, 40);
+            
+          a.href = dataUrl;
+          a.download = `Roche_Eid_${safeName}.jpg`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          showToast("JPG Downloaded");
+        }
+
+        // ==========================================
+        // SAFE PRINT FUNCTION
+        // ==========================================
+        async function print6x6Inches() {
+          if (!state.ready || !bgImg) {
+            showToast("Template not loaded yet.");
+            return;
+          }
+
+          await ensureFontsLoaded();
+          const PRINT_SCALE = 1; 
+          const pngDataUrl = buildHiResDataUrl(PRINT_SCALE, "image/png");
+
+          const w = window.open("", "_blank");
+          if (!w) {
+            showToast("Pop-up blocked. Allow pop-ups to print.");
+            return;
+          }
+
+          // Single line string split specifically to defeat Live Server's injection scanner
+          const safeHTML = "<!DOCTYPE html><html><head><title>Print</title><style>@page { size: 6in 6in; margin: 0; } html, body { margin: 0; padding: 0; width: 6in; height: 6in; background: #fff; overflow: hidden; } img { width: 6in; height: 6in; display: block; }</style></head><body><img id='card-img' /></" + "body></" + "html>";
+
+          w.document.write(safeHTML);
+          w.document.close();
+
+          const imgEl = w.document.getElementById("card-img");
+          imgEl.onload = () => {
+            w.focus();
+            w.print();
+            setTimeout(() => { w.close(); }, 300);
+          };
+          imgEl.src = pngDataUrl;
+        }
+
+        btnPdf.addEventListener("click", () => {
+          exportPDF().catch((err) => {
+            console.error(err);
+            showToast("PDF export failed. Use Chrome/Edge.");
+          });
+        });
+
+        btnJpg.addEventListener("click", () => {
+          downloadJPG().catch((err) => {
+            console.error(err);
+            showToast("JPG export failed.");
+          });
+        });
+
+        btnPrint.addEventListener("click", () => {
+          print6x6Inches().catch((err) => {
+            console.error(err);
+            showToast("Printing issue found");
+          });
+        });
+
+        // Boot
+        (async () => {
+          try {
+            assetStatus.textContent = "Loading EidUlFitr2026.jpg…";
+            bgImg = await loadImage(ASSET_FINAL);
+            await ensureFontsLoaded();
+            state.ready = true;
+            assetStatus.textContent = "Assets loaded ✔";
+            render();
+          } catch (e) {
+            console.error(e);
+            assetStatus.textContent = "Background not found ✖";
+            showToast("Put EidUlFitr2026.jpg in ./images/");
+            state.ready = false;
+            render();
+          }
+        })();
+      })();
+    </script>
+  </body>
+</html>
