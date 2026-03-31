@@ -1,0 +1,806 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Roche Custom Card Builder</title>
+
+    <style>
+      /* --- FONTS --- */
+      @font-face { font-family: "Roche Sans Light"; src: url("./fonts/RocheSans-Light.ttf") format("truetype"); font-weight: 300; font-style: normal; font-display: swap; }
+      @font-face { font-family: "Roche Sans Regular"; src: url("./fonts/RocheSans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+      @font-face { font-family: "Roche Sans Medium"; src: url("./fonts/RocheSans-Medium.ttf") format("truetype"); font-weight: 500; font-style: normal; font-display: swap; }
+      @font-face { font-family: "Roche Sans Bold"; src: url("./fonts/RocheSans-Bold.ttf") format("truetype"); font-weight: 700; font-style: normal; font-display: swap; }
+      @font-face { font-family: "Cream Cake"; src: url("./fonts/CreamCake.otf") format("opentype"); font-weight: 400; font-style: normal; font-display: swap; }
+
+      :root {
+        --bg: #0b1220;
+        --panel: rgba(16, 26, 51, 0.7);
+        --panel-light: rgba(28, 41, 74, 0.8);
+        --border: rgba(255, 255, 255, 0.12);
+        --text: #eaf0ff;
+        --muted: #9bb0de;
+        --roche-blue: #0066cc;
+        --good: #2dd4bf;
+        --danger: #ef4444;
+        --shadow: 0 14px 40px rgba(0, 0, 0, 0.35);
+        --radius: 18px;
+        --font: "Roche Sans Regular", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0; font-family: var(--font);
+        background: radial-gradient(1200px 700px at 20% 10%, #1b2b58 0%, var(--bg) 60%, #070b14 100%);
+        color: var(--text);
+      }
+      header {
+        position: sticky; top: 0; z-index: 10;
+        background: rgba(11, 18, 32, 0.75); backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--border);
+      }
+      .wrap { max-width: 1280px; margin: 0 auto; padding: 16px; }
+      .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+      .brand { display: flex; align-items: center; gap: 12px; user-select: none; }
+      .logo {
+        width: 40px; height: 40px; border-radius: 12px; background: white;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: bold; color: var(--roche-blue); font-size: 10px; box-shadow: var(--shadow);
+      }
+      .brand h1 { margin: 0; font-size: 16px; }
+      .brand p { margin: 2px 0 0; font-size: 12px; color: var(--muted); }
+      .pill {
+        border: 1px solid var(--border); background: rgba(16, 26, 51, 0.55);
+        border-radius: 999px; padding: 8px 12px; font-size: 12px; color: var(--muted);
+        display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
+      }
+      .pill:hover { opacity: 0.8; }
+      
+      main .wrap { padding-top: 18px; padding-bottom: 36px; }
+      .grid { display: grid; grid-template-columns: 450px 1fr; gap: 20px; align-items: start; }
+      @media (max-width: 1024px) { .grid { grid-template-columns: 1fr; } }
+
+      .card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+      .hd { padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+      .hd h2 { margin: 0; font-size: 14px; }
+      .bd { padding: 16px; }
+
+      /* Modern Dropzone for Background */
+      .dropzone {
+        border: 2px dashed rgba(90, 167, 255, 0.4);
+        border-radius: 12px;
+        background: rgba(16, 26, 51, 0.4);
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: block;
+        margin-bottom: 16px;
+        user-select: none;
+      }
+      .dropzone:hover {
+        background: rgba(16, 26, 51, 0.8);
+        border-color: var(--good);
+      }
+      .dropzone-icon { font-size: 28px; margin-bottom: 8px; }
+      .dropzone-text { font-size: 13px; font-weight: 500; color: var(--text); }
+      .dropzone-subtext { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+      .field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 0; flex: 1; min-width: 0; }
+      .field label { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      
+      .field input[type="text"], .field input[type="number"], .field select, .field input[type="color"] {
+        width: 100%; border-radius: 6px; border: 1px solid var(--border); background: rgba(7, 11, 20, 0.35);
+        color: #ffffff; padding: 6px 8px; outline: none; font-family: var(--font); font-size: 12px; height: 32px;
+      }
+      .field input[type="color"] { padding: 2px 4px; cursor: pointer; }
+      .field input[type="range"] { height: 32px; cursor: pointer; }
+
+      .btnRow { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);}
+      .btn {
+        display: inline-flex; align-items: center; justify-content: center; padding: 8px 12px;
+        border-radius: 8px; border: 1px solid var(--border); background: rgba(16, 26, 51, 0.75);
+        color: var(--text); cursor: pointer; font-weight: 700; font-size: 12px; user-select: none; transition: transform 0.06s ease;
+      }
+      .btn:hover { border-color: rgba(90, 167, 255, 0.55); }
+      .btn:active { transform: translateY(1px); }
+      .btn.good { background: rgba(45, 212, 191, 0.12); border-color: rgba(45, 212, 191, 0.35); }
+      .btn.danger { background: rgba(239, 68, 68, 0.12); border-color: rgba(239, 68, 68, 0.35); color: #fca5a5; padding: 0 10px; height: 32px; flex-shrink: 0;}
+
+      /* Compact Layers Panel */
+      .layers-container { display: flex; flex-direction: column; gap: 8px; max-height: 55vh; overflow-y: auto; overflow-x: hidden; padding-right: 4px;}
+      .layer-card { background: var(--panel-light); border: 1px solid var(--border); border-radius: 8px; padding: 10px; }
+      
+      .compact-row { display: flex; gap: 8px; align-items: flex-end; margin-bottom: 8px; width: 100%;}
+      .compact-row:last-child { margin-bottom: 0; }
+
+      .canvasStage { border-radius: var(--radius); border: 1px solid var(--border); background: rgba(7, 11, 20, 0.35); padding: 14px; position: relative; }
+      canvas { width: 100%; height: auto; display: block; background: #1b2b58; border-radius: 14px; cursor: grab; }
+      canvas:active { cursor: grabbing; }
+
+      .miniRow { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+      
+      .toggle-grid { display: flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; color: var(--good); font-weight: 600;}
+      .toggle-grid input { cursor: pointer; }
+
+      .toast {
+        position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); background: rgba(16, 26, 51, 0.92);
+        border: 1px solid var(--border); box-shadow: var(--shadow); padding: 10px 12px; border-radius: 999px;
+        color: var(--text); font-size: 12px; display: none; z-index: 99; text-align: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <div class="wrap">
+        <div class="row">
+          <div class="brand">
+            <div class="logo">Roche</div>
+            <div>
+              <h1>Custom Card Builder</h1>
+              <p>Upload a background, mask photos, and drag custom text.</p>
+            </div>
+          </div>
+          <a class="pill" href="./index.html">← Home</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="wrap">
+        <div class="grid">
+          <div class="card">
+            <div class="hd">
+              <h2>Designer Controls</h2>
+            </div>
+            <div class="bd">
+              
+              <label for="inpBg" class="dropzone">
+                <div class="dropzone-icon">🖼️</div>
+                <div class="dropzone-text">Click to upload Background Template</div>
+                <div class="dropzone-subtext">Supports JPG, PNG (1080x1080 recommended)</div>
+              </label>
+              <input id="inpBg" type="file" accept="image/*" style="display:none;" />
+
+              <div style="margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+                <label style="font-size: 12px; color: var(--muted); font-weight:bold;">Canvas Layers</label>
+                <div style="display:flex; gap:6px;">
+                  <button class="btn" id="btnAddPhoto" style="padding: 6px 10px; font-size: 11px;">+ Photo</button>
+                  <button class="btn" id="btnAddText" style="padding: 6px 10px; font-size: 11px;">+ Text</button>
+                </div>
+              </div>
+
+              <input type="file" id="inpAddPhoto" accept="image/*" style="display:none;" />
+
+              <div class="layers-container" id="layersContainer">
+                <div style="text-align:center; padding: 16px; color: var(--muted); font-size: 12px; border: 1px dashed var(--border); border-radius: 8px;">
+                  No layers added. Click "+ Photo" or "+ Text".
+                </div>
+              </div>
+
+              <div class="btnRow">
+                <button class="btn good" id="btnPdf">Download PDF</button>
+                <button class="btn good" id="btnJpg">Download JPG</button>
+                <button class="btn good" id="btnPrint">Print (6x6)</button>
+                <button class="btn" id="btnReset">Reset All</button>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="hd">
+              <h2>Canvas Preview</h2>
+              <span id="assetStatus">Waiting for background...</span>
+            </div>
+            <div class="bd">
+              <div class="miniRow">
+                <label class="toggle-grid">
+                  <input type="checkbox" id="chkGrid" checked />
+                  Show Measurement Grid
+                </label>
+                <div>Output Size: <b>1080 × 1080</b></div>
+              </div>
+              <div class="canvasStage">
+                <canvas id="cv" width="1080" height="1080"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+    <script>
+      (() => {
+        const CANVAS_W = 1080;
+        const CANVAS_H = 1080;
+
+        // Fonts Mapping
+        const FONT_OPTIONS = [
+          { label: "Roche Sans Light", value: '"Roche Sans Light", sans-serif' },
+          { label: "Roche Sans Regular", value: '"Roche Sans Regular", sans-serif' },
+          { label: "Roche Sans Medium", value: '"Roche Sans Medium", sans-serif' },
+          { label: "Roche Sans Bold", value: '"Roche Sans Bold", sans-serif' },
+          { label: "Cream Cake (Script)", value: '"Cream Cake", cursive' }
+        ];
+
+        // Core State
+        const state = {
+          bgImg: null,
+          layers: [], 
+          draggingObj: null,
+          dragOffsetX: 0,
+          dragOffsetY: 0,
+          showGrid: true,
+          snapLineX: null,
+          snapLineY: null
+        };
+
+        // DOM Elements
+        const cv = document.getElementById("cv");
+        const ctx = cv.getContext("2d");
+        const inpBg = document.getElementById("inpBg");
+        const btnAddText = document.getElementById("btnAddText");
+        const btnAddPhoto = document.getElementById("btnAddPhoto");
+        const inpAddPhoto = document.getElementById("inpAddPhoto");
+        const layersContainer = document.getElementById("layersContainer");
+        const chkGrid = document.getElementById("chkGrid");
+        const assetStatus = document.getElementById("assetStatus");
+        const toast = document.getElementById("toast");
+
+        function showToast(msg) {
+          toast.textContent = msg;
+          toast.style.display = "block";
+          clearTimeout(showToast._t);
+          showToast._t = setTimeout(() => (toast.style.display = "none"), 2200);
+        }
+
+        function ptToPx(pt) { return pt * (96 / 72); }
+        function genId() { return Math.random().toString(36).substr(2, 9); }
+
+        async function ensureFontsLoaded() {
+          try {
+            await Promise.all([
+              document.fonts.load(`normal 300 20px "Roche Sans Light"`),
+              document.fonts.load(`normal 400 20px "Roche Sans Regular"`),
+              document.fonts.load(`normal 500 20px "Roche Sans Medium"`),
+              document.fonts.load(`normal 700 20px "Roche Sans Bold"`),
+              document.fonts.load(`normal 400 20px "Cream Cake"`)
+            ]);
+            await document.fonts.ready;
+          } catch (e) {
+            console.warn("Font preloading warning:", e);
+          }
+        }
+
+        // ==========================================
+        // LAYER MANAGEMENT
+        // ==========================================
+        
+        function addTextLayer() {
+          state.layers.push({
+            type: 'text', id: genId(), text: "New Text",
+            font: FONT_OPTIONS[2].value, size: 27, color: "#ffffff",
+            align: "center", x: CANVAS_W / 2, y: CANVAS_H / 2
+          });
+          renderUI();
+          renderCanvas();
+        }
+
+        async function addImageLayer(file) {
+          const dataUrl = await new Promise((resolve) => {
+            const fr = new FileReader();
+            fr.onload = () => resolve(fr.result);
+            fr.readAsDataURL(file);
+          });
+          const img = await new Promise((resolve) => {
+            const im = new Image();
+            im.onload = () => resolve(im);
+            im.src = dataUrl;
+          });
+
+          state.layers.push({
+            type: 'image', id: genId(), img: img,
+            mask: "circle", frameSize: 400, zoom: 1.0,
+            borderWidth: 0, borderColor: "#ffffff", borderStyle: "solid",
+            x: CANVAS_W / 2, y: CANVAS_H / 2
+          });
+          
+          inpAddPhoto.value = ""; 
+          renderUI();
+          renderCanvas();
+        }
+
+        function removeLayer(id) {
+          state.layers = state.layers.filter(l => l.id !== id);
+          renderUI();
+          renderCanvas();
+        }
+
+        function updateLayer(id, key, value) {
+          const layer = state.layers.find(l => l.id === id);
+          if (layer) {
+            layer[key] = value;
+            renderCanvas();
+          }
+        }
+
+        window.removeLayer = removeLayer;
+        window.updateLayer = updateLayer;
+
+        // Render Compact Controls
+        function renderUI() {
+          layersContainer.innerHTML = "";
+          if (state.layers.length === 0) {
+            layersContainer.innerHTML = `<div style="text-align:center; padding: 16px; color: var(--muted); font-size: 12px; border: 1px dashed var(--border); border-radius: 8px;">No layers added. Click "+ Photo" or "+ Text"</div>`;
+            return;
+          }
+
+          const reversedLayers = [...state.layers].reverse();
+
+          reversedLayers.forEach((layer) => {
+            const card = document.createElement("div");
+            card.className = "layer-card";
+            
+            if (layer.type === 'text') {
+              const fontOptionsHtml = FONT_OPTIONS.map(opt => `<option value='${opt.value}' ${layer.font === opt.value ? 'selected' : ''}>${opt.label}</option>`).join("");
+              card.innerHTML = `
+                <div class="compact-row">
+                  <div class="field" style="flex: 1;">
+                    <label>📝 Text Content</label>
+                    <input type="text" value="${layer.text}" oninput="window.updateLayer('${layer.id}', 'text', this.value)" />
+                  </div>
+                  <button class="btn danger" title="Delete Layer" onclick="window.removeLayer('${layer.id}')">X</button>
+                </div>
+                <div class="compact-row">
+                  <div class="field" style="flex: 2;">
+                    <label>Font</label>
+                    <select onchange="window.updateLayer('${layer.id}', 'font', this.value)">${fontOptionsHtml}</select>
+                  </div>
+                  <div class="field" style="flex: 1; max-width: 65px;">
+                    <label>Size</label>
+                    <input type="number" title="Size (pt)" value="${layer.size}" min="10" max="200" oninput="window.updateLayer('${layer.id}', 'size', Number(this.value))" />
+                  </div>
+                  <div class="field" style="flex: 1; max-width: 45px;">
+                    <label>Color</label>
+                    <input type="color" title="Color" value="${layer.color}" oninput="window.updateLayer('${layer.id}', 'color', this.value)" />
+                  </div>
+                  <div class="field" style="flex: 1; max-width: 80px;">
+                    <label>Align</label>
+                    <select title="Alignment" onchange="window.updateLayer('${layer.id}', 'align', this.value)">
+                      <option value="left" ${layer.align === 'left' ? 'selected' : ''}>Left</option>
+                      <option value="center" ${layer.align === 'center' ? 'selected' : ''}>Center</option>
+                      <option value="right" ${layer.align === 'right' ? 'selected' : ''}>Right</option>
+                    </select>
+                  </div>
+                </div>
+              `;
+            } else if (layer.type === 'image') {
+              card.innerHTML = `
+                <div class="compact-row">
+                  <div class="field" style="flex: 1;">
+                    <label style="color: var(--good)">📸 Photo Layer - Mask</label>
+                    <select title="Mask Shape" onchange="window.updateLayer('${layer.id}', 'mask', this.value)">
+                      <option value="circle" ${layer.mask === 'circle' ? 'selected' : ''}>Circle</option>
+                      <option value="square" ${layer.mask === 'square' ? 'selected' : ''}>Square</option>
+                      <option value="none" ${layer.mask === 'none' ? 'selected' : ''}>None (Original Rectangle)</option>
+                    </select>
+                  </div>
+                  <div class="field" style="flex: 1;">
+                    <label>Frame Size</label>
+                    <input type="range" value="${layer.frameSize}" min="100" max="1000" oninput="window.updateLayer('${layer.id}', 'frameSize', Number(this.value))" />
+                  </div>
+                  <div class="field" style="flex: 1;">
+                    <label>Image Zoom</label>
+                    <input type="range" value="${layer.zoom}" min="0.5" max="3" step="0.05" oninput="window.updateLayer('${layer.id}', 'zoom', Number(this.value))" />
+                  </div>
+                  <button class="btn danger" title="Delete Layer" onclick="window.removeLayer('${layer.id}')">X</button>
+                </div>
+                <div class="compact-row">
+                  <div class="field" style="flex: 1; max-width: 65px;">
+                     <label>Border</label>
+                     <input type="number" title="Border Width" value="${layer.borderWidth}" min="0" max="50" oninput="window.updateLayer('${layer.id}', 'borderWidth', Number(this.value))" />
+                  </div>
+                  <div class="field" style="flex: 1; max-width: 45px;">
+                     <label>Color</label>
+                     <input type="color" title="Border Color" value="${layer.borderColor}" oninput="window.updateLayer('${layer.id}', 'borderColor', this.value)" />
+                  </div>
+                  <div class="field" style="flex: 1;">
+                     <label>Border Style</label>
+                     <select title="Border Style" onchange="window.updateLayer('${layer.id}', 'borderStyle', this.value)">
+                        <option value="solid" ${layer.borderStyle === 'solid' ? 'selected' : ''}>Solid</option>
+                        <option value="dashed" ${layer.borderStyle === 'dashed' ? 'selected' : ''}>Dashed</option>
+                        <option value="dotted" ${layer.borderStyle === 'dotted' ? 'selected' : ''}>Dotted</option>
+                     </select>
+                  </div>
+                </div>
+              `;
+            }
+            layersContainer.appendChild(card);
+          });
+        }
+
+        // ==========================================
+        // CANVAS RENDERING
+        // ==========================================
+
+        function drawGrid(ctxToDraw) {
+          ctxToDraw.save();
+          ctxToDraw.lineWidth = 1;
+          ctxToDraw.strokeStyle = "rgba(255, 255, 255, 0.15)";
+          ctxToDraw.beginPath();
+          for(let i=1; i<10; i++) {
+            const pos = i * (CANVAS_W/10);
+            ctxToDraw.moveTo(pos, 0); ctxToDraw.lineTo(pos, CANVAS_H);
+            ctxToDraw.moveTo(0, pos); ctxToDraw.lineTo(CANVAS_W, pos);
+          }
+          ctxToDraw.stroke();
+
+          ctxToDraw.strokeStyle = "rgba(45, 212, 191, 0.4)"; 
+          ctxToDraw.setLineDash([5, 5]);
+          ctxToDraw.beginPath();
+          ctxToDraw.moveTo(CANVAS_W/2, 0); ctxToDraw.lineTo(CANVAS_W/2, CANVAS_H);
+          ctxToDraw.moveTo(0, CANVAS_H/2); ctxToDraw.lineTo(CANVAS_W, CANVAS_H/2);
+          ctxToDraw.stroke();
+          ctxToDraw.restore();
+        }
+
+        function drawSnapLines(ctxToDraw) {
+          ctxToDraw.save();
+          ctxToDraw.strokeStyle = "#ef4444"; // Red guide lines for snapping
+          ctxToDraw.lineWidth = 2;
+          ctxToDraw.setLineDash([8, 8]);
+          
+          if (state.snapLineX !== null) {
+            ctxToDraw.beginPath();
+            ctxToDraw.moveTo(state.snapLineX, 0);
+            ctxToDraw.lineTo(state.snapLineX, CANVAS_H);
+            ctxToDraw.stroke();
+          }
+          if (state.snapLineY !== null) {
+            ctxToDraw.beginPath();
+            ctxToDraw.moveTo(0, state.snapLineY);
+            ctxToDraw.lineTo(CANVAS_W, state.snapLineY);
+            ctxToDraw.stroke();
+          }
+          ctxToDraw.restore();
+        }
+
+        function drawPipeline(ctxToDraw, isExport = false) {
+          ctxToDraw.clearRect(0, 0, CANVAS_W, CANVAS_H);
+
+          // 1. Background
+          if (state.bgImg) {
+            const img = state.bgImg;
+            const s = Math.min(img.width, img.height);
+            const sx = Math.floor((img.width - s) / 2);
+            const sy = Math.floor((img.height - s) / 2);
+            ctxToDraw.drawImage(img, sx, sy, s, s, 0, 0, CANVAS_W, CANVAS_H);
+          } else {
+            ctxToDraw.fillStyle = "#ffffff";
+            ctxToDraw.fillRect(0, 0, CANVAS_W, CANVAS_H);
+          }
+
+          // 2. Layers
+          state.layers.forEach(layer => {
+            if (layer.type === 'image') {
+              ctxToDraw.save();
+              ctxToDraw.translate(layer.x, layer.y);
+              
+              ctxToDraw.beginPath();
+              if (layer.mask === 'circle') {
+                ctxToDraw.arc(0, 0, layer.frameSize / 2, 0, Math.PI * 2);
+              } else if (layer.mask === 'square') {
+                ctxToDraw.rect(-layer.frameSize/2, -layer.frameSize/2, layer.frameSize, layer.frameSize);
+              }
+
+              const imgAR = layer.img.width / layer.img.height;
+              let drawW, drawH;
+              if (layer.mask === 'none') {
+                if (imgAR > 1) { drawW = layer.frameSize; drawH = drawW / imgAR; }
+                else { drawH = layer.frameSize; drawW = drawH * imgAR; }
+              } else {
+                if (imgAR > 1) { drawH = layer.frameSize; drawW = drawH * imgAR; } 
+                else { drawW = layer.frameSize; drawH = drawW / imgAR; }
+              }
+              drawW *= layer.zoom; drawH *= layer.zoom;
+
+              if (layer.mask !== 'none') {
+                ctxToDraw.save();
+                ctxToDraw.clip();
+                ctxToDraw.drawImage(layer.img, -drawW/2, -drawH/2, drawW, drawH);
+                ctxToDraw.restore();
+              } else {
+                ctxToDraw.drawImage(layer.img, -drawW/2, -drawH/2, drawW, drawH);
+                ctxToDraw.beginPath();
+                ctxToDraw.rect(-drawW/2, -drawH/2, drawW, drawH);
+              }
+
+              if (layer.borderWidth > 0) {
+                ctxToDraw.lineWidth = layer.borderWidth;
+                ctxToDraw.strokeStyle = layer.borderColor;
+                if (layer.borderStyle === 'dashed') ctxToDraw.setLineDash([15, 15]);
+                else if (layer.borderStyle === 'dotted') ctxToDraw.setLineDash([5, 10]);
+                ctxToDraw.stroke();
+              }
+              ctxToDraw.restore();
+            } 
+            else if (layer.type === 'text') {
+              if (!layer.text) return;
+              ctxToDraw.save();
+              ctxToDraw.textAlign = layer.align;
+              ctxToDraw.textBaseline = "top";
+              ctxToDraw.fillStyle = layer.color;
+              ctxToDraw.font = `normal 400 ${ptToPx(layer.size)}px ${layer.font}`;
+              ctxToDraw.fillText(layer.text, layer.x, layer.y);
+              ctxToDraw.restore();
+            }
+          });
+
+          // 3. Guides (Only on screen)
+          if (!isExport) {
+            if (state.showGrid) drawGrid(ctxToDraw);
+            if (state.snapLineX !== null || state.snapLineY !== null) drawSnapLines(ctxToDraw);
+          }
+        }
+
+        function renderCanvas() {
+          drawPipeline(ctx, false);
+        }
+
+        chkGrid.addEventListener("change", (e) => {
+          state.showGrid = e.target.checked;
+          renderCanvas();
+        });
+
+
+        // ==========================================
+        // DRAG, DROP, AND MULTI-LAYER SNAPPING LOGIC
+        // ==========================================
+
+        const SNAP_THRESHOLD = 15;
+
+        function getMousePos(evt) {
+          const rect = cv.getBoundingClientRect();
+          const scaleX = cv.width / rect.width;
+          const scaleY = cv.height / rect.height;
+          return { x: (evt.clientX - rect.left) * scaleX, y: (evt.clientY - rect.top) * scaleY };
+        }
+
+        // Calculates the bounding box for ANY layer type
+        function getLayerBounds(layer, tempX = layer.x, tempY = layer.y) {
+          let left, right, center, top, bottom, middle;
+          
+          if (layer.type === 'text') {
+            ctx.save();
+            ctx.font = `normal 400 ${ptToPx(layer.size)}px ${layer.font}`;
+            const w = ctx.measureText(layer.text || "").width || 0;
+            const h = ptToPx(layer.size) * 1.2;
+            ctx.restore();
+            
+            if(layer.align === 'center') { left = tempX - w/2; right = tempX + w/2; }
+            else if(layer.align === 'right') { left = tempX - w; right = tempX; }
+            else { left = tempX; right = tempX + w; }
+            
+            center = left + w/2;
+            top = tempY; bottom = tempY + h; middle = tempY + h/2;
+            
+          } else if (layer.type === 'image') {
+            const size = layer.frameSize;
+            left = tempX - size/2; right = tempX + size/2; center = tempX;
+            top = tempY - size/2; bottom = tempY + size/2; middle = tempY;
+          }
+          return { left, right, center, top, bottom, middle };
+        }
+
+        function getHoveredLayer(mousePos) {
+          for (let i = state.layers.length - 1; i >= 0; i--) {
+            const layer = state.layers[i];
+            const bounds = getLayerBounds(layer);
+            const pad = 15;
+            
+            if (mousePos.x >= bounds.left - pad && mousePos.x <= bounds.right + pad &&
+                mousePos.y >= bounds.top - pad && mousePos.y <= bounds.bottom + pad) {
+              return layer;
+            }
+          }
+          return null;
+        }
+
+        cv.addEventListener("pointerdown", (e) => {
+          const pos = getMousePos(e);
+          const hitObj = getHoveredLayer(pos);
+
+          if (hitObj) {
+            state.draggingObj = hitObj;
+            state.dragOffsetX = pos.x - hitObj.x;
+            state.dragOffsetY = pos.y - hitObj.y;
+            cv.setPointerCapture(e.pointerId);
+            cv.style.cursor = "grabbing";
+          }
+        });
+
+        cv.addEventListener("pointermove", (e) => {
+          const pos = getMousePos(e);
+          
+          if (state.draggingObj) {
+            let newX = pos.x - state.dragOffsetX;
+            let newY = pos.y - state.dragOffsetY;
+            
+            state.snapLineX = null;
+            state.snapLineY = null;
+            let snappedX = false;
+            let snappedY = false;
+
+            // Calculate Projected bounds for the dragging object
+            const dragBounds = getLayerBounds(state.draggingObj, newX, newY);
+
+            // 1. Snapping to OTHER LAYERS (Aligns text edges/centers to other texts)
+            for (const other of state.layers) {
+              if (other.id === state.draggingObj.id) continue; // Skip self
+              const otherBounds = getLayerBounds(other);
+
+              // X Snapping
+              if (!snappedX) {
+                const xSnaps = [
+                  { d: dragBounds.left, o: otherBounds.left },
+                  { d: dragBounds.center, o: otherBounds.center },
+                  { d: dragBounds.right, o: otherBounds.right }
+                ];
+                for (const snap of xSnaps) {
+                  if (Math.abs(snap.d - snap.o) < SNAP_THRESHOLD) {
+                    newX += (snap.o - snap.d); // Shift position to lock edge
+                    state.snapLineX = snap.o;
+                    snappedX = true;
+                    break;
+                  }
+                }
+              }
+
+              // Y Snapping
+              if (!snappedY) {
+                const ySnaps = [
+                  { d: dragBounds.top, o: otherBounds.top },
+                  { d: dragBounds.middle, o: otherBounds.middle },
+                  { d: dragBounds.bottom, o: otherBounds.bottom }
+                ];
+                for (const snap of ySnaps) {
+                  if (Math.abs(snap.d - snap.o) < SNAP_THRESHOLD) {
+                    newY += (snap.o - snap.d);
+                    state.snapLineY = snap.o;
+                    snappedY = true;
+                    break;
+                  }
+                }
+              }
+            }
+
+            // 2. Snapping to CANVAS GRID (Fallback if no layers matched)
+            if (state.showGrid) {
+              const gridStepX = CANVAS_W / 10;
+              const gridStepY = CANVAS_H / 10;
+              for(let i=1; i<10; i++) {
+                const targetX = i * gridStepX;
+                if (!snappedX && Math.abs(newX - targetX) < SNAP_THRESHOLD) {
+                  newX = targetX;
+                  state.snapLineX = targetX;
+                  snappedX = true;
+                }
+                const targetY = i * gridStepY;
+                if (!snappedY && Math.abs(newY - targetY) < SNAP_THRESHOLD) {
+                  newY = targetY;
+                  state.snapLineY = targetY;
+                  snappedY = true;
+                }
+              }
+            }
+
+            // Apply locked coordinates
+            state.draggingObj.x = newX;
+            state.draggingObj.y = newY;
+            renderCanvas();
+            
+          } else {
+            cv.style.cursor = getHoveredLayer(pos) ? "grab" : "default";
+          }
+        });
+
+        cv.addEventListener("pointerup", (e) => {
+          if (state.draggingObj) {
+            state.draggingObj = null;
+            state.snapLineX = null;
+            state.snapLineY = null;
+            cv.style.cursor = "default";
+            try { cv.releasePointerCapture(e.pointerId); } catch (_) {}
+            renderCanvas();
+          }
+        });
+
+        // ==========================================
+        // EXPORTS
+        // ==========================================
+
+        inpBg.addEventListener("change", async (e) => {
+          const file = e.target.files && e.target.files[0];
+          if (!file) return;
+          assetStatus.textContent = "Loading background...";
+          const dataUrl = await new Promise((res, rej) => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.onerror = rej; fr.readAsDataURL(file); });
+          const img = await new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = dataUrl; });
+
+          state.bgImg = img;
+          assetStatus.textContent = "Custom Background Uploaded ✔";
+          if(state.layers.length === 0) addTextLayer();
+          renderCanvas();
+        });
+
+        btnAddText.addEventListener("click", addTextLayer);
+        btnAddPhoto.addEventListener("click", () => inpAddPhoto.click());
+        inpAddPhoto.addEventListener("change", (e) => { const file = e.target.files && e.target.files[0]; if (file) addImageLayer(file); });
+
+        document.getElementById("btnReset").addEventListener("click", () => {
+          state.bgImg = null; state.layers = []; inpBg.value = ""; assetStatus.textContent = "Waiting for background..."; renderUI(); renderCanvas(); showToast("Canvas Reset");
+        });
+
+        function exportDataUrl(scale, mimeType) {
+          const hi = document.createElement("canvas");
+          hi.width = CANVAS_W * scale; hi.height = CANVAS_H * scale;
+          const hctx = hi.getContext("2d");
+          hctx.imageSmoothingEnabled = true; hctx.imageSmoothingQuality = "high";
+          hctx.save(); hctx.scale(scale, scale);
+          drawPipeline(hctx, true); 
+          hctx.restore();
+          return hi.toDataURL(mimeType, 0.95);
+        }
+
+        document.getElementById("btnPdf").addEventListener("click", async () => {
+          if (!state.bgImg && state.layers.length === 0) return showToast("Nothing to export.");
+          await ensureFontsLoaded();
+          const { jsPDF } = window.jspdf;
+          const pdf = new jsPDF({ orientation: "portrait", unit: "in", format: [6, 6] });
+          pdf.addImage(exportDataUrl(1, "image/png"), "PNG", 0, 0, 6, 6, undefined, "FAST");
+          pdf.save(`Roche_Custom_Card.pdf`);
+          showToast(`PDF downloaded.`);
+        });
+
+        document.getElementById("btnJpg").addEventListener("click", async () => {
+          if (!state.bgImg && state.layers.length === 0) return showToast("Nothing to export.");
+          await ensureFontsLoaded();
+          const a = document.createElement("a");
+          a.href = exportDataUrl(1, "image/jpeg");
+          a.download = `Roche_Custom_Card.jpg`;
+          document.body.appendChild(a); a.click(); document.body.removeChild(a);
+          showToast("JPG Downloaded");
+        });
+
+        document.getElementById("btnPrint").addEventListener("click", async () => {
+          if (!state.bgImg && state.layers.length === 0) return showToast("Nothing to print.");
+          await ensureFontsLoaded();
+          const w = window.open("", "_blank");
+          if (!w) return showToast("Pop-up blocked.");
+
+          const htmlLines = [
+            "<!DOCTYPE html>", "<ht" + "ml>", "<he" + "ad>", "<title>Print</title>", "<style>",
+            "@page { size: 6in 6in; margin: 0; }",
+            "html, body { margin: 0; padding: 0; width: 6in; height: 6in; background: #fff; overflow: hidden; }",
+            "img { width: 6in; height: 6in; display: block; }",
+            "</style>", "</he" + "ad>", "<bo" + "dy>", "<img id='card-img' />", "</bo" + "dy>", "</ht" + "ml>"
+          ];
+          w.document.write(htmlLines.join(""));
+          w.document.close();
+
+          const imgEl = w.document.getElementById("card-img");
+          imgEl.onload = () => { w.focus(); w.print(); setTimeout(() => w.close(), 300); };
+          imgEl.src = exportDataUrl(1, "image/png");
+        });
+
+        ensureFontsLoaded().then(() => { renderUI(); renderCanvas(); });
+
+      })();
+    </script>
+  </body>
+</html>
