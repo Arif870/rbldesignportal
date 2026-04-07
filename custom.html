@@ -23,6 +23,7 @@
         --roche-blue: #0066cc;
         --good: #2dd4bf;
         --danger: #ef4444;
+        --warning: #f59e0b;
         --shadow: 0 14px 40px rgba(0, 0, 0, 0.35);
         --radius: 18px;
         --font: "Roche Sans Regular", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
@@ -41,7 +42,11 @@
       }
       .wrap { max-width: 1280px; margin: 0 auto; padding: 16px; }
       .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-      .brand { display: flex; align-items: center; gap: 12px; user-select: none; }
+      
+      /* Added cursor pointer for the secret admin toggle */
+      .brand { display: flex; align-items: center; gap: 12px; user-select: none; cursor: pointer; }
+      .brand:active { opacity: 0.7; }
+      
       .logo {
         width: 40px; height: 40px; border-radius: 12px; background: white;
         display: flex; align-items: center; justify-content: center;
@@ -62,26 +67,15 @@
 
       .card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
       .hd { padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-      .hd h2 { margin: 0; font-size: 14px; }
+      .hd h2 { margin: 0; font-size: 14px; display: flex; align-items: center; gap: 8px;}
       .bd { padding: 16px; }
 
       /* Modern Dropzone for Background */
       .dropzone {
-        border: 2px dashed rgba(90, 167, 255, 0.4);
-        border-radius: 12px;
-        background: rgba(16, 26, 51, 0.4);
-        padding: 20px;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        display: block;
-        margin-bottom: 16px;
-        user-select: none;
+        border: 2px dashed rgba(90, 167, 255, 0.4); border-radius: 12px; background: rgba(16, 26, 51, 0.4);
+        padding: 20px; text-align: center; cursor: pointer; transition: all 0.2s ease; display: block; margin-bottom: 16px; user-select: none;
       }
-      .dropzone:hover {
-        background: rgba(16, 26, 51, 0.8);
-        border-color: var(--good);
-      }
+      .dropzone:hover { background: rgba(16, 26, 51, 0.8); border-color: var(--good); }
       .dropzone-icon { font-size: 28px; margin-bottom: 8px; }
       .dropzone-text { font-size: 13px; font-weight: 500; color: var(--text); }
       .dropzone-subtext { font-size: 11px; color: var(--muted); margin-top: 4px; }
@@ -96,7 +90,7 @@
       .field input[type="color"] { padding: 2px 4px; cursor: pointer; }
       .field input[type="range"] { height: 32px; cursor: pointer; }
 
-      .btnRow { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);}
+      .btnRow { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);}
       .btn {
         display: inline-flex; align-items: center; justify-content: center; padding: 8px 12px;
         border-radius: 8px; border: 1px solid var(--border); background: rgba(16, 26, 51, 0.75);
@@ -106,10 +100,13 @@
       .btn:active { transform: translateY(1px); }
       .btn.good { background: rgba(45, 212, 191, 0.12); border-color: rgba(45, 212, 191, 0.35); }
       .btn.danger { background: rgba(239, 68, 68, 0.12); border-color: rgba(239, 68, 68, 0.35); color: #fca5a5; padding: 0 10px; height: 32px; flex-shrink: 0;}
+      .btn.warning { background: rgba(245, 158, 11, 0.12); border-color: rgba(245, 158, 11, 0.35); color: #fcd34d; padding: 0 10px; height: 32px; flex-shrink: 0;}
+      .btn.action { background: rgba(90, 167, 255, 0.15); border-color: rgba(90, 167, 255, 0.4); color: #93c5fd; }
 
       /* Compact Layers Panel */
-      .layers-container { display: flex; flex-direction: column; gap: 8px; max-height: 55vh; overflow-y: auto; overflow-x: hidden; padding-right: 4px;}
-      .layer-card { background: var(--panel-light); border: 1px solid var(--border); border-radius: 8px; padding: 10px; }
+      .layers-container { display: flex; flex-direction: column; gap: 8px; max-height: 50vh; overflow-y: auto; overflow-x: hidden; padding-right: 4px;}
+      .layer-card { background: var(--panel-light); border: 1px solid var(--border); border-radius: 8px; padding: 10px; position: relative;}
+      .layer-card.locked { opacity: 0.6; pointer-events: none; border-color: var(--warning); }
       
       .compact-row { display: flex; gap: 8px; align-items: flex-end; margin-bottom: 8px; width: 100%;}
       .compact-row:last-child { margin-bottom: 0; }
@@ -135,14 +132,16 @@
     <header>
       <div class="wrap">
         <div class="row">
-          <div class="brand">
+          <div class="brand" id="brandLogo" title="Double-click to toggle Admin Tools">
             <div class="logo">Roche</div>
             <div>
               <h1>Custom Card Builder</h1>
-              <p>Upload a background, mask photos, and drag custom text.</p>
+              <p>Template creation and rendering portal.</p>
             </div>
           </div>
-          <a class="pill" href="./index.html">← Home</a>
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <a class="pill" href="./index.html">← Home</a>
+          </div>
         </div>
       </div>
     </header>
@@ -152,19 +151,33 @@
         <div class="grid">
           <div class="card">
             <div class="hd">
-              <h2>Designer Controls</h2>
+              <h2 id="controlTitle">Designer Controls</h2>
+              <div style="display:flex; gap:6px;" id="adminActions">
+                <button class="btn action" id="btnLoadTpl" style="padding: 4px 8px; font-size: 11px;">📂 Load Template</button>
+                <button class="btn action" id="btnSaveTpl" style="padding: 4px 8px; font-size: 11px;">💾 Save Template</button>
+              </div>
+              <input type="file" id="inpLoadTpl" accept=".json" style="display:none;" />
             </div>
+            
             <div class="bd">
               
-              <label for="inpBg" class="dropzone">
-                <div class="dropzone-icon">🖼️</div>
-                <div class="dropzone-text">Click to upload Background Template</div>
-                <div class="dropzone-subtext">Supports JPG, PNG (1080x1080 recommended)</div>
-              </label>
-              <input id="inpBg" type="file" accept="image/*" style="display:none;" />
+              <div id="bgUploaderArea">
+                <div style="display:flex; justify-content: space-between; align-items: flex-end; margin-bottom: 4px;">
+                  <label style="font-size: 12px; color: var(--muted);">1. Background Template</label>
+                  <label id="bgLockArea" style="font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 4px; color: var(--warning);">
+                    <input type="checkbox" id="chkBgLock" /> Lock BG
+                  </label>
+                </div>
+                <label for="inpBg" class="dropzone">
+                  <div class="dropzone-icon">🖼️</div>
+                  <div class="dropzone-text">Click to upload Background</div>
+                  <div class="dropzone-subtext">Supports JPG, PNG</div>
+                </label>
+                <input id="inpBg" type="file" accept="image/*" style="display:none;" />
+              </div>
 
-              <div style="margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
-                <label style="font-size: 12px; color: var(--muted); font-weight:bold;">Canvas Layers</label>
+              <div id="layersHeader" style="margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                <label style="font-size: 12px; color: var(--muted); font-weight:bold;">2. Canvas Layers</label>
                 <div style="display:flex; gap:6px;">
                   <button class="btn" id="btnAddPhoto" style="padding: 6px 10px; font-size: 11px;">+ Photo</button>
                   <button class="btn" id="btnAddText" style="padding: 6px 10px; font-size: 11px;">+ Text</button>
@@ -175,14 +188,14 @@
 
               <div class="layers-container" id="layersContainer">
                 <div style="text-align:center; padding: 16px; color: var(--muted); font-size: 12px; border: 1px dashed var(--border); border-radius: 8px;">
-                  No layers added. Click "+ Photo" or "+ Text".
+                  No layers added.
                 </div>
               </div>
 
               <div class="btnRow">
                 <button class="btn good" id="btnPdf">Download PDF</button>
                 <button class="btn good" id="btnJpg">Download JPG</button>
-                <button class="btn good" id="btnPrint">Print (6x6)</button>
+                <button class="btn good" id="btnPrint">Print</button>
                 <button class="btn" id="btnReset">Reset All</button>
               </div>
 
@@ -195,7 +208,7 @@
               <span id="assetStatus">Waiting for background...</span>
             </div>
             <div class="bd">
-              <div class="miniRow">
+              <div class="miniRow" id="gridToggleArea">
                 <label class="toggle-grid">
                   <input type="checkbox" id="chkGrid" checked />
                   Show Measurement Grid
@@ -220,7 +233,6 @@
         const CANVAS_W = 1080;
         const CANVAS_H = 1080;
 
-        // Fonts Mapping
         const FONT_OPTIONS = [
           { label: "Roche Sans Light", value: '"Roche Sans Light", sans-serif' },
           { label: "Roche Sans Regular", value: '"Roche Sans Regular", sans-serif' },
@@ -231,7 +243,10 @@
 
         // Core State
         const state = {
+          appMode: 'admin', // Defaults to admin so you can build. Switches to 'user' automatically when a template is loaded.
           bgImg: null,
+          bgSrc: null, 
+          bgLocked: false,
           layers: [], 
           draggingObj: null,
           dragOffsetX: 0,
@@ -245,19 +260,36 @@
         const cv = document.getElementById("cv");
         const ctx = cv.getContext("2d");
         const inpBg = document.getElementById("inpBg");
+        const bgUploaderArea = document.getElementById("bgUploaderArea");
+        const bgLockArea = document.getElementById("bgLockArea");
+        const chkBgLock = document.getElementById("chkBgLock");
         const btnAddText = document.getElementById("btnAddText");
         const btnAddPhoto = document.getElementById("btnAddPhoto");
         const inpAddPhoto = document.getElementById("inpAddPhoto");
         const layersContainer = document.getElementById("layersContainer");
+        const layersHeader = document.getElementById("layersHeader");
+        const adminActions = document.getElementById("adminActions");
+        const gridToggleArea = document.getElementById("gridToggleArea");
         const chkGrid = document.getElementById("chkGrid");
         const assetStatus = document.getElementById("assetStatus");
         const toast = document.getElementById("toast");
+        const controlTitle = document.getElementById("controlTitle");
+        const brandLogo = document.getElementById("brandLogo");
 
         function showToast(msg) {
           toast.textContent = msg;
           toast.style.display = "block";
           clearTimeout(showToast._t);
           showToast._t = setTimeout(() => (toast.style.display = "none"), 2200);
+        }
+
+        function loadImage(src) {
+          return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            img.onerror = () => reject(new Error("Failed to load: " + src));
+            img.src = src;
+          });
         }
 
         function ptToPx(pt) { return pt * (96 / 72); }
@@ -274,9 +306,48 @@
             ]);
             await document.fonts.ready;
           } catch (e) {
-            console.warn("Font preloading warning:", e);
+            console.warn("Font load warning:", e);
           }
         }
+
+        // ==========================================
+        // HIDDEN APP MODE TOGGLE
+        // ==========================================
+        function applyAppMode() {
+          controlTitle.textContent = state.appMode === 'admin' ? "Designer Controls" : "Card Inputs";
+          
+          // Toggle Admin features visibility
+          adminActions.style.display = state.appMode === 'admin' ? "flex" : "none";
+          layersHeader.style.display = state.appMode === 'admin' ? "flex" : "none";
+          
+          // Always hide grid in User mode, show based on checkbox in Admin mode
+          if (state.appMode === 'user') {
+             state.showGrid = false;
+             gridToggleArea.style.display = "none";
+          } else {
+             state.showGrid = chkGrid.checked;
+             gridToggleArea.style.display = "flex";
+          }
+          
+          // Clear dragging state just in case
+          state.draggingObj = null;
+          cv.style.cursor = "default";
+          
+          renderUI();
+          renderCanvas();
+        }
+
+        // Secret Double-Click on the Roche Logo to Toggle Admin Mode
+        brandLogo.addEventListener("dblclick", () => {
+          state.appMode = state.appMode === 'admin' ? 'user' : 'admin';
+          showToast(state.appMode === 'admin' ? "Admin Mode Unlocked 🔓" : "User Mode Activated 👤");
+          applyAppMode();
+        });
+
+        chkBgLock.addEventListener("change", (e) => {
+          state.bgLocked = e.target.checked;
+          renderUI();
+        });
 
         // ==========================================
         // LAYER MANAGEMENT
@@ -286,7 +357,7 @@
           state.layers.push({
             type: 'text', id: genId(), text: "New Text",
             font: FONT_OPTIONS[2].value, size: 27, color: "#ffffff",
-            align: "center", x: CANVAS_W / 2, y: CANVAS_H / 2
+            align: "center", x: CANVAS_W / 2, y: CANVAS_H / 2, locked: false
           });
           renderUI();
           renderCanvas();
@@ -305,10 +376,10 @@
           });
 
           state.layers.push({
-            type: 'image', id: genId(), img: img,
+            type: 'image', id: genId(), img: img, src: dataUrl,
             mask: "circle", frameSize: 400, zoom: 1.0,
             borderWidth: 0, borderColor: "#ffffff", borderStyle: "solid",
-            x: CANVAS_W / 2, y: CANVAS_H / 2
+            x: CANVAS_W / 2, y: CANVAS_H / 2, locked: false
           });
           
           inpAddPhoto.value = ""; 
@@ -316,110 +387,179 @@
           renderCanvas();
         }
 
+        // Used specifically for End-Users to safely swap an image inside an existing locked mask
+        async function replaceLayerImage(id, file) {
+          const layer = state.layers.find(l => l.id === id);
+          if (!layer) return;
+          const dataUrl = await new Promise((resolve) => {
+            const fr = new FileReader();
+            fr.onload = () => resolve(fr.result);
+            fr.readAsDataURL(file);
+          });
+          const img = await new Promise((resolve) => {
+            const im = new Image();
+            im.onload = () => resolve(im);
+            im.src = dataUrl;
+          });
+          layer.img = img;
+          layer.src = dataUrl;
+          renderCanvas();
+        }
+
         function removeLayer(id) {
           state.layers = state.layers.filter(l => l.id !== id);
-          renderUI();
-          renderCanvas();
+          renderUI(); renderCanvas();
         }
 
         function updateLayer(id, key, value) {
           const layer = state.layers.find(l => l.id === id);
-          if (layer) {
-            layer[key] = value;
-            renderCanvas();
-          }
+          if (layer) { layer[key] = value; renderCanvas(); }
+        }
+
+        function toggleLock(id) {
+          const layer = state.layers.find(l => l.id === id);
+          if (layer) { layer.locked = !layer.locked; renderUI(); renderCanvas(); }
         }
 
         window.removeLayer = removeLayer;
         window.updateLayer = updateLayer;
+        window.toggleLock = toggleLock;
+        window.replaceLayerImage = replaceLayerImage;
 
-        // Render Compact Controls
+        // Render UI based on Admin/User mode
         function renderUI() {
           layersContainer.innerHTML = "";
-          if (state.layers.length === 0) {
-            layersContainer.innerHTML = `<div style="text-align:center; padding: 16px; color: var(--muted); font-size: 12px; border: 1px dashed var(--border); border-radius: 8px;">No layers added. Click "+ Photo" or "+ Text"</div>`;
+          
+          // Background UI Logic
+          if (state.appMode === 'user' && state.bgLocked) {
+            bgUploaderArea.style.display = "none";
+          } else {
+            bgUploaderArea.style.display = "block";
+            bgLockArea.style.display = state.appMode === 'admin' ? "flex" : "none";
+            chkBgLock.checked = state.bgLocked;
+          }
+
+          // Filter layers based on mode
+          let displayLayers = state.layers;
+          if (state.appMode === 'user') {
+            displayLayers = state.layers.filter(l => !l.locked);
+          }
+
+          if (displayLayers.length === 0) {
+            layersContainer.innerHTML = `<div style="text-align:center; padding: 16px; color: var(--muted); font-size: 12px; border: 1px dashed var(--border); border-radius: 8px;">No unlocked fields.</div>`;
             return;
           }
 
-          const reversedLayers = [...state.layers].reverse();
+          const reversedLayers = [...displayLayers].reverse();
 
           reversedLayers.forEach((layer) => {
             const card = document.createElement("div");
-            card.className = "layer-card";
+            card.className = `layer-card ${layer.locked && state.appMode === 'admin' ? 'locked' : ''}`;
             
-            if (layer.type === 'text') {
-              const fontOptionsHtml = FONT_OPTIONS.map(opt => `<option value='${opt.value}' ${layer.font === opt.value ? 'selected' : ''}>${opt.label}</option>`).join("");
-              card.innerHTML = `
-                <div class="compact-row">
-                  <div class="field" style="flex: 1;">
-                    <label>📝 Text Content</label>
-                    <input type="text" value="${layer.text}" oninput="window.updateLayer('${layer.id}', 'text', this.value)" />
+            if (state.appMode === 'user') {
+              // END USER MODE - Highly Restricted View (But zoom is kept)
+              if (layer.type === 'text') {
+                card.innerHTML = `
+                  <div class="field" style="margin-bottom: 0;">
+                    <label style="font-size: 12px;">📝 Edit Text Content</label>
+                    <input type="text" value="${layer.text}" oninput="window.updateLayer('${layer.id}', 'text', this.value)" style="height:36px;" />
                   </div>
-                  <button class="btn danger" title="Delete Layer" onclick="window.removeLayer('${layer.id}')">X</button>
-                </div>
-                <div class="compact-row">
-                  <div class="field" style="flex: 2;">
-                    <label>Font</label>
-                    <select onchange="window.updateLayer('${layer.id}', 'font', this.value)">${fontOptionsHtml}</select>
+                `;
+              } else if (layer.type === 'image') {
+                card.innerHTML = `
+                  <div class="compact-row" style="align-items: center;">
+                    <div class="field" style="flex: 2;">
+                      <label style="color: var(--good); font-size: 12px;">📸 Replace Photo</label>
+                      <input type="file" accept="image/*" style="height: 36px; padding: 0; border: none; background: transparent; cursor: pointer;" onchange="if(this.files && this.files[0]) window.replaceLayerImage('${layer.id}', this.files[0])" />
+                    </div>
+                    <div class="field" style="flex: 1; max-width: 120px;">
+                      <label>Zoom Image</label>
+                      <input type="range" value="${layer.zoom}" min="0.5" max="3" step="0.05" oninput="window.updateLayer('${layer.id}', 'zoom', Number(this.value))" />
+                    </div>
                   </div>
-                  <div class="field" style="flex: 1; max-width: 65px;">
-                    <label>Size</label>
-                    <input type="number" title="Size (pt)" value="${layer.size}" min="10" max="200" oninput="window.updateLayer('${layer.id}', 'size', Number(this.value))" />
+                `;
+              }
+            } else {
+              // ADMIN MODE - Full Designer View
+              const lockBtnHtml = `<button class="btn warning" title="Toggle Lock" onclick="window.toggleLock('${layer.id}')" style="pointer-events: auto;">${layer.locked ? '🔒' : '🔓'}</button>`;
+              const deleteBtnHtml = `<button class="btn danger" title="Delete Layer" onclick="window.removeLayer('${layer.id}')" style="pointer-events: auto;">X</button>`;
+
+              if (layer.type === 'text') {
+                const fontOptionsHtml = FONT_OPTIONS.map(opt => `<option value='${opt.value}' ${layer.font === opt.value ? 'selected' : ''}>${opt.label}</option>`).join("");
+                card.innerHTML = `
+                  <div class="compact-row">
+                    <div class="field" style="flex: 1;">
+                      <label>📝 Text Content ${layer.locked ? '(LOCKED)' : ''}</label>
+                      <input type="text" value="${layer.text}" oninput="window.updateLayer('${layer.id}', 'text', this.value)" />
+                    </div>
+                    ${lockBtnHtml}
+                    ${deleteBtnHtml}
                   </div>
-                  <div class="field" style="flex: 1; max-width: 45px;">
-                    <label>Color</label>
-                    <input type="color" title="Color" value="${layer.color}" oninput="window.updateLayer('${layer.id}', 'color', this.value)" />
+                  <div class="compact-row">
+                    <div class="field" style="flex: 2;">
+                      <label>Font</label>
+                      <select onchange="window.updateLayer('${layer.id}', 'font', this.value)">${fontOptionsHtml}</select>
+                    </div>
+                    <div class="field" style="flex: 1; max-width: 65px;">
+                      <label>Size</label>
+                      <input type="number" title="Size (pt)" value="${layer.size}" min="10" max="200" oninput="window.updateLayer('${layer.id}', 'size', Number(this.value))" />
+                    </div>
+                    <div class="field" style="flex: 1; max-width: 45px;">
+                      <label>Color</label>
+                      <input type="color" title="Color" value="${layer.color}" oninput="window.updateLayer('${layer.id}', 'color', this.value)" />
+                    </div>
+                    <div class="field" style="flex: 1; max-width: 80px;">
+                      <label>Align</label>
+                      <select title="Alignment" onchange="window.updateLayer('${layer.id}', 'align', this.value)">
+                        <option value="left" ${layer.align === 'left' ? 'selected' : ''}>Left</option>
+                        <option value="center" ${layer.align === 'center' ? 'selected' : ''}>Center</option>
+                        <option value="right" ${layer.align === 'right' ? 'selected' : ''}>Right</option>
+                      </select>
+                    </div>
                   </div>
-                  <div class="field" style="flex: 1; max-width: 80px;">
-                    <label>Align</label>
-                    <select title="Alignment" onchange="window.updateLayer('${layer.id}', 'align', this.value)">
-                      <option value="left" ${layer.align === 'left' ? 'selected' : ''}>Left</option>
-                      <option value="center" ${layer.align === 'center' ? 'selected' : ''}>Center</option>
-                      <option value="right" ${layer.align === 'right' ? 'selected' : ''}>Right</option>
-                    </select>
+                `;
+              } else if (layer.type === 'image') {
+                card.innerHTML = `
+                  <div class="compact-row">
+                    <div class="field" style="flex: 1;">
+                      <label style="color: var(--good)">📸 Photo Layer ${layer.locked ? '(LOCKED)' : ''}</label>
+                      <select title="Mask Shape" onchange="window.updateLayer('${layer.id}', 'mask', this.value)">
+                        <option value="circle" ${layer.mask === 'circle' ? 'selected' : ''}>Circle</option>
+                        <option value="square" ${layer.mask === 'square' ? 'selected' : ''}>Square</option>
+                        <option value="none" ${layer.mask === 'none' ? 'selected' : ''}>None (Original Rectangle)</option>
+                      </select>
+                    </div>
+                    <div class="field" style="flex: 1;">
+                      <label>Frame Size</label>
+                      <input type="range" value="${layer.frameSize}" min="100" max="1000" oninput="window.updateLayer('${layer.id}', 'frameSize', Number(this.value))" />
+                    </div>
+                    <div class="field" style="flex: 1;">
+                      <label>Image Zoom</label>
+                      <input type="range" value="${layer.zoom}" min="0.5" max="3" step="0.05" oninput="window.updateLayer('${layer.id}', 'zoom', Number(this.value))" />
+                    </div>
+                    ${lockBtnHtml}
+                    ${deleteBtnHtml}
                   </div>
-                </div>
-              `;
-            } else if (layer.type === 'image') {
-              card.innerHTML = `
-                <div class="compact-row">
-                  <div class="field" style="flex: 1;">
-                    <label style="color: var(--good)">📸 Photo Layer - Mask</label>
-                    <select title="Mask Shape" onchange="window.updateLayer('${layer.id}', 'mask', this.value)">
-                      <option value="circle" ${layer.mask === 'circle' ? 'selected' : ''}>Circle</option>
-                      <option value="square" ${layer.mask === 'square' ? 'selected' : ''}>Square</option>
-                      <option value="none" ${layer.mask === 'none' ? 'selected' : ''}>None (Original Rectangle)</option>
-                    </select>
+                  <div class="compact-row">
+                    <div class="field" style="flex: 1; max-width: 65px;">
+                       <label>Border</label>
+                       <input type="number" title="Border Width" value="${layer.borderWidth}" min="0" max="50" oninput="window.updateLayer('${layer.id}', 'borderWidth', Number(this.value))" />
+                    </div>
+                    <div class="field" style="flex: 1; max-width: 45px;">
+                       <label>Color</label>
+                       <input type="color" title="Border Color" value="${layer.borderColor}" oninput="window.updateLayer('${layer.id}', 'borderColor', this.value)" />
+                    </div>
+                    <div class="field" style="flex: 1;">
+                       <label>Border Style</label>
+                       <select title="Border Style" onchange="window.updateLayer('${layer.id}', 'borderStyle', this.value)">
+                          <option value="solid" ${layer.borderStyle === 'solid' ? 'selected' : ''}>Solid</option>
+                          <option value="dashed" ${layer.borderStyle === 'dashed' ? 'selected' : ''}>Dashed</option>
+                          <option value="dotted" ${layer.borderStyle === 'dotted' ? 'selected' : ''}>Dotted</option>
+                       </select>
+                    </div>
                   </div>
-                  <div class="field" style="flex: 1;">
-                    <label>Frame Size</label>
-                    <input type="range" value="${layer.frameSize}" min="100" max="1000" oninput="window.updateLayer('${layer.id}', 'frameSize', Number(this.value))" />
-                  </div>
-                  <div class="field" style="flex: 1;">
-                    <label>Image Zoom</label>
-                    <input type="range" value="${layer.zoom}" min="0.5" max="3" step="0.05" oninput="window.updateLayer('${layer.id}', 'zoom', Number(this.value))" />
-                  </div>
-                  <button class="btn danger" title="Delete Layer" onclick="window.removeLayer('${layer.id}')">X</button>
-                </div>
-                <div class="compact-row">
-                  <div class="field" style="flex: 1; max-width: 65px;">
-                     <label>Border</label>
-                     <input type="number" title="Border Width" value="${layer.borderWidth}" min="0" max="50" oninput="window.updateLayer('${layer.id}', 'borderWidth', Number(this.value))" />
-                  </div>
-                  <div class="field" style="flex: 1; max-width: 45px;">
-                     <label>Color</label>
-                     <input type="color" title="Border Color" value="${layer.borderColor}" oninput="window.updateLayer('${layer.id}', 'borderColor', this.value)" />
-                  </div>
-                  <div class="field" style="flex: 1;">
-                     <label>Border Style</label>
-                     <select title="Border Style" onchange="window.updateLayer('${layer.id}', 'borderStyle', this.value)">
-                        <option value="solid" ${layer.borderStyle === 'solid' ? 'selected' : ''}>Solid</option>
-                        <option value="dashed" ${layer.borderStyle === 'dashed' ? 'selected' : ''}>Dashed</option>
-                        <option value="dotted" ${layer.borderStyle === 'dotted' ? 'selected' : ''}>Dotted</option>
-                     </select>
-                  </div>
-                </div>
-              `;
+                `;
+              }
             }
             layersContainer.appendChild(card);
           });
@@ -452,20 +592,18 @@
 
         function drawSnapLines(ctxToDraw) {
           ctxToDraw.save();
-          ctxToDraw.strokeStyle = "#ef4444"; // Red guide lines for snapping
+          ctxToDraw.strokeStyle = "#ef4444"; 
           ctxToDraw.lineWidth = 2;
           ctxToDraw.setLineDash([8, 8]);
           
           if (state.snapLineX !== null) {
             ctxToDraw.beginPath();
-            ctxToDraw.moveTo(state.snapLineX, 0);
-            ctxToDraw.lineTo(state.snapLineX, CANVAS_H);
+            ctxToDraw.moveTo(state.snapLineX, 0); ctxToDraw.lineTo(state.snapLineX, CANVAS_H);
             ctxToDraw.stroke();
           }
           if (state.snapLineY !== null) {
             ctxToDraw.beginPath();
-            ctxToDraw.moveTo(0, state.snapLineY);
-            ctxToDraw.lineTo(CANVAS_W, state.snapLineY);
+            ctxToDraw.moveTo(0, state.snapLineY); ctxToDraw.lineTo(CANVAS_W, state.snapLineY);
             ctxToDraw.stroke();
           }
           ctxToDraw.restore();
@@ -474,7 +612,6 @@
         function drawPipeline(ctxToDraw, isExport = false) {
           ctxToDraw.clearRect(0, 0, CANVAS_W, CANVAS_H);
 
-          // 1. Background
           if (state.bgImg) {
             const img = state.bgImg;
             const s = Math.min(img.width, img.height);
@@ -486,18 +623,14 @@
             ctxToDraw.fillRect(0, 0, CANVAS_W, CANVAS_H);
           }
 
-          // 2. Layers
           state.layers.forEach(layer => {
             if (layer.type === 'image') {
               ctxToDraw.save();
               ctxToDraw.translate(layer.x, layer.y);
               
               ctxToDraw.beginPath();
-              if (layer.mask === 'circle') {
-                ctxToDraw.arc(0, 0, layer.frameSize / 2, 0, Math.PI * 2);
-              } else if (layer.mask === 'square') {
-                ctxToDraw.rect(-layer.frameSize/2, -layer.frameSize/2, layer.frameSize, layer.frameSize);
-              }
+              if (layer.mask === 'circle') ctxToDraw.arc(0, 0, layer.frameSize / 2, 0, Math.PI * 2);
+              else if (layer.mask === 'square') ctxToDraw.rect(-layer.frameSize/2, -layer.frameSize/2, layer.frameSize, layer.frameSize);
 
               const imgAR = layer.img.width / layer.img.height;
               let drawW, drawH;
@@ -511,14 +644,12 @@
               drawW *= layer.zoom; drawH *= layer.zoom;
 
               if (layer.mask !== 'none') {
-                ctxToDraw.save();
-                ctxToDraw.clip();
+                ctxToDraw.save(); ctxToDraw.clip();
                 ctxToDraw.drawImage(layer.img, -drawW/2, -drawH/2, drawW, drawH);
                 ctxToDraw.restore();
               } else {
                 ctxToDraw.drawImage(layer.img, -drawW/2, -drawH/2, drawW, drawH);
-                ctxToDraw.beginPath();
-                ctxToDraw.rect(-drawW/2, -drawH/2, drawW, drawH);
+                ctxToDraw.beginPath(); ctxToDraw.rect(-drawW/2, -drawH/2, drawW, drawH);
               }
 
               if (layer.borderWidth > 0) {
@@ -542,25 +673,18 @@
             }
           });
 
-          // 3. Guides (Only on screen)
           if (!isExport) {
             if (state.showGrid) drawGrid(ctxToDraw);
             if (state.snapLineX !== null || state.snapLineY !== null) drawSnapLines(ctxToDraw);
           }
         }
 
-        function renderCanvas() {
-          drawPipeline(ctx, false);
-        }
-
-        chkGrid.addEventListener("change", (e) => {
-          state.showGrid = e.target.checked;
-          renderCanvas();
-        });
+        function renderCanvas() { drawPipeline(ctx, false); }
+        chkGrid.addEventListener("change", (e) => { state.showGrid = e.target.checked; renderCanvas(); });
 
 
         // ==========================================
-        // DRAG, DROP, AND MULTI-LAYER SNAPPING LOGIC
+        // DRAG, DROP, AND MULTI-LAYER SNAPPING
         // ==========================================
 
         const SNAP_THRESHOLD = 15;
@@ -572,24 +696,18 @@
           return { x: (evt.clientX - rect.left) * scaleX, y: (evt.clientY - rect.top) * scaleY };
         }
 
-        // Calculates the bounding box for ANY layer type
         function getLayerBounds(layer, tempX = layer.x, tempY = layer.y) {
           let left, right, center, top, bottom, middle;
-          
           if (layer.type === 'text') {
             ctx.save();
             ctx.font = `normal 400 ${ptToPx(layer.size)}px ${layer.font}`;
             const w = ctx.measureText(layer.text || "").width || 0;
             const h = ptToPx(layer.size) * 1.2;
             ctx.restore();
-            
             if(layer.align === 'center') { left = tempX - w/2; right = tempX + w/2; }
             else if(layer.align === 'right') { left = tempX - w; right = tempX; }
             else { left = tempX; right = tempX + w; }
-            
-            center = left + w/2;
-            top = tempY; bottom = tempY + h; middle = tempY + h/2;
-            
+            center = left + w/2; top = tempY; bottom = tempY + h; middle = tempY + h/2;
           } else if (layer.type === 'image') {
             const size = layer.frameSize;
             left = tempX - size/2; right = tempX + size/2; center = tempX;
@@ -599,11 +717,13 @@
         }
 
         function getHoveredLayer(mousePos) {
+          // If User Mode, completely disable canvas dragging. The layout is frozen.
+          if (state.appMode === 'user') return null;
+
           for (let i = state.layers.length - 1; i >= 0; i--) {
             const layer = state.layers[i];
             const bounds = getLayerBounds(layer);
             const pad = 15;
-            
             if (mousePos.x >= bounds.left - pad && mousePos.x <= bounds.right + pad &&
                 mousePos.y >= bounds.top - pad && mousePos.y <= bounds.bottom + pad) {
               return layer;
@@ -637,70 +757,42 @@
             let snappedX = false;
             let snappedY = false;
 
-            // Calculate Projected bounds for the dragging object
             const dragBounds = getLayerBounds(state.draggingObj, newX, newY);
 
-            // 1. Snapping to OTHER LAYERS (Aligns text edges/centers to other texts)
+            // Snap to ANY layer
             for (const other of state.layers) {
-              if (other.id === state.draggingObj.id) continue; // Skip self
+              if (other.id === state.draggingObj.id) continue;
               const otherBounds = getLayerBounds(other);
 
-              // X Snapping
               if (!snappedX) {
-                const xSnaps = [
-                  { d: dragBounds.left, o: otherBounds.left },
-                  { d: dragBounds.center, o: otherBounds.center },
-                  { d: dragBounds.right, o: otherBounds.right }
-                ];
+                const xSnaps = [ { d: dragBounds.left, o: otherBounds.left }, { d: dragBounds.center, o: otherBounds.center }, { d: dragBounds.right, o: otherBounds.right } ];
                 for (const snap of xSnaps) {
                   if (Math.abs(snap.d - snap.o) < SNAP_THRESHOLD) {
-                    newX += (snap.o - snap.d); // Shift position to lock edge
-                    state.snapLineX = snap.o;
-                    snappedX = true;
-                    break;
+                    newX += (snap.o - snap.d); state.snapLineX = snap.o; snappedX = true; break;
                   }
                 }
               }
-
-              // Y Snapping
               if (!snappedY) {
-                const ySnaps = [
-                  { d: dragBounds.top, o: otherBounds.top },
-                  { d: dragBounds.middle, o: otherBounds.middle },
-                  { d: dragBounds.bottom, o: otherBounds.bottom }
-                ];
+                const ySnaps = [ { d: dragBounds.top, o: otherBounds.top }, { d: dragBounds.middle, o: otherBounds.middle }, { d: dragBounds.bottom, o: otherBounds.bottom } ];
                 for (const snap of ySnaps) {
                   if (Math.abs(snap.d - snap.o) < SNAP_THRESHOLD) {
-                    newY += (snap.o - snap.d);
-                    state.snapLineY = snap.o;
-                    snappedY = true;
-                    break;
+                    newY += (snap.o - snap.d); state.snapLineY = snap.o; snappedY = true; break;
                   }
                 }
               }
             }
 
-            // 2. Snapping to CANVAS GRID (Fallback if no layers matched)
+            // Snap to grid
             if (state.showGrid) {
-              const gridStepX = CANVAS_W / 10;
-              const gridStepY = CANVAS_H / 10;
+              const gridStepX = CANVAS_W / 10; const gridStepY = CANVAS_H / 10;
               for(let i=1; i<10; i++) {
                 const targetX = i * gridStepX;
-                if (!snappedX && Math.abs(newX - targetX) < SNAP_THRESHOLD) {
-                  newX = targetX;
-                  state.snapLineX = targetX;
-                  snappedX = true;
-                }
+                if (!snappedX && Math.abs(newX - targetX) < SNAP_THRESHOLD) { newX = targetX; state.snapLineX = targetX; snappedX = true; }
                 const targetY = i * gridStepY;
-                if (!snappedY && Math.abs(newY - targetY) < SNAP_THRESHOLD) {
-                  newY = targetY;
-                  state.snapLineY = targetY;
-                  snappedY = true;
-                }
+                if (!snappedY && Math.abs(newY - targetY) < SNAP_THRESHOLD) { newY = targetY; state.snapLineY = targetY; snappedY = true; }
               }
             }
 
-            // Apply locked coordinates
             state.draggingObj.x = newX;
             state.draggingObj.y = newY;
             renderCanvas();
@@ -722,7 +814,83 @@
         });
 
         // ==========================================
-        // EXPORTS
+        // TEMPLATE EXPORT & IMPORT (JSON)
+        // ==========================================
+
+        document.getElementById("btnSaveTpl").addEventListener("click", () => {
+          if (!state.bgSrc && state.layers.length === 0) return showToast("Nothing to save!");
+          
+          // Remove actual HTMLImageElements from layers so it can be JSON stringified
+          const cleanLayers = state.layers.map(l => {
+            const copy = { ...l };
+            if (copy.type === 'image') delete copy.img;
+            return copy;
+          });
+
+          const exportData = {
+            bgSrc: state.bgSrc,
+            bgLocked: state.bgLocked,
+            layers: cleanLayers
+          };
+
+          const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData));
+          const a = document.createElement("a");
+          a.href = dataStr;
+          a.download = "roche_template.json";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          showToast("Template Saved!");
+        });
+
+        document.getElementById("btnLoadTpl").addEventListener("click", () => {
+          document.getElementById("inpLoadTpl").click();
+        });
+
+        document.getElementById("inpLoadTpl").addEventListener("change", async (e) => {
+          const file = e.target.files && e.target.files[0];
+          if (!file) return;
+
+          try {
+            const text = await file.text();
+            const data = JSON.parse(text);
+
+            // Reconstruct background
+            if (data.bgSrc) {
+              state.bgSrc = data.bgSrc;
+              state.bgImg = await loadImage(data.bgSrc);
+              assetStatus.textContent = "Template Background Loaded ✔";
+            } else {
+              state.bgSrc = null;
+              state.bgImg = null;
+              assetStatus.textContent = "Waiting for background...";
+            }
+            state.bgLocked = data.bgLocked || false;
+
+            // Reconstruct layers and images
+            state.layers = [];
+            for (const l of data.layers) {
+              if (l.type === 'image' && l.src) {
+                l.img = await loadImage(l.src);
+              }
+              state.layers.push(l);
+            }
+
+            // Immediately switch to End-User Mode upon successful template load
+            state.appMode = 'user';
+            applyAppMode();
+            showToast("Template Loaded (User Mode Active) 👤");
+
+          } catch (err) {
+            console.error(err);
+            showToast("Error loading template.");
+          }
+          e.target.value = ""; // reset
+        });
+
+
+        // ==========================================
+        // FILE UPLOADS AND EXPORTS
         // ==========================================
 
         inpBg.addEventListener("change", async (e) => {
@@ -732,9 +900,10 @@
           const dataUrl = await new Promise((res, rej) => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.onerror = rej; fr.readAsDataURL(file); });
           const img = await new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = dataUrl; });
 
+          state.bgSrc = dataUrl;
           state.bgImg = img;
           assetStatus.textContent = "Custom Background Uploaded ✔";
-          if(state.layers.length === 0) addTextLayer();
+          if(state.layers.length === 0 && state.appMode === 'admin') addTextLayer();
           renderCanvas();
         });
 
@@ -743,7 +912,7 @@
         inpAddPhoto.addEventListener("change", (e) => { const file = e.target.files && e.target.files[0]; if (file) addImageLayer(file); });
 
         document.getElementById("btnReset").addEventListener("click", () => {
-          state.bgImg = null; state.layers = []; inpBg.value = ""; assetStatus.textContent = "Waiting for background..."; renderUI(); renderCanvas(); showToast("Canvas Reset");
+          state.bgImg = null; state.bgSrc = null; state.layers = []; inpBg.value = ""; assetStatus.textContent = "Waiting for background..."; renderUI(); renderCanvas(); showToast("Canvas Reset");
         });
 
         function exportDataUrl(scale, mimeType) {
@@ -798,7 +967,7 @@
           imgEl.src = exportDataUrl(1, "image/png");
         });
 
-        ensureFontsLoaded().then(() => { renderUI(); renderCanvas(); });
+        ensureFontsLoaded().then(() => { applyAppMode(); });
 
       })();
     </script>
